@@ -1,18 +1,29 @@
 \documentclass[final,leqno]{siamltex1213}
 
-%\usepackage{inconsolata}
-
 \usepackage{fontspec}
+\usepackage{microtype}
 
 \usepackage{newunicodechar}
 \newunicodechar{α}{\ensuremath \alpha}
 \newunicodechar{β}{\ensuremath \beta}
 
 \usepackage{listings}
-\lstset{basicstyle=\ttfamily, numbers=left, numberstyle=\tiny, mathescape=true}
+\lstdefinelanguage{julia}{
+  basicstyle=\small\ttfamily,
+  showspaces=false,
+  showstringspaces=false,
+  keywordstyle={\textbf},
+  morekeywords={if,else,elseif,while,for,begin,end,quote,try,catch,return,local,abstract,function,generated,macro,ccall,finally,typealias,break,continue,type,global,module,using,import,export,const,let,bitstype,do,in,baremodule,importall,immutable},
+  escapeinside={~}{~},
+  morecomment=[l]{\#},
+  commentstyle={},
+  morestring=[b]",
+}
+\lstset{language=julia, numbers=left, numberstyle=\tiny, mathescape=true}
+
 \usepackage{todonotes}
 \usepackage{algorithm}
-%\usepackage{algorithmic}
+\usepackage{algorithmic}
 \bibliographystyle{siam}
 
 \title{Practical Lanczos bidiagonalizations in Julia
@@ -84,13 +95,36 @@ their entirety; rather, it suffices to determine the first $k$ diagonal
 entries of $S$, being the $k$ largest singular values, and their
 corresponding columns of $U$ and $V$.
 
-The Lanczos bidiagonalization~\cite{Golub1965} is a ntural choice.
+The Lanczos bidiagonalization~\cite{Golub1965} is a natural choice.
 
 This paper describes an implementation of the Lanczos bidiagonalization
 method written in pure Julia.
 
 
 \section{Implementing simple bidiagonalization in Julia}
+
+\begin{algorithm}
+\caption{Simple Golub-Kahan-Lanczos bidiagonalization in pseudocode}
+
+\begin{algorithmic}
+\REQUIRE A matrix $A$ and a unit vector $q$
+\STATE $\beta_0$ = 0
+\FOR{$j=1,2,\dots,k$}
+
+\STATE $\tilde{p}_j = A q_j - \beta_{j-1} p_{j-1}$
+\STATE $\alpha_j = \left\Vert \tilde{p}_j \right\Vert_2$
+\STATE $p_j = \tilde{p}_j / \alpha_j$
+
+\STATE $\tilde{q}_{j+1} = A'p_j - \alpha_j q_j$
+\STATE $\beta_j = \left\Vert \tilde{q}_{j+1} \right\Vert_2$
+\STATE $q_{j+1} = \tilde{q}_{j+1} / \beta_j$
+
+\ENDFOR
+\RETURN $p_1, \dots, p_k, q_1, \dots, q_{k+1}, \alpha_1, \dots, \alpha_{k+1}, \beta_1, \dots, \beta_{k+1}$
+\end{algorithmic}
+\end{algorithm}
+
+
 
 \begin{algorithm}
 \caption{Simple Golub-Kahan-Lanczos bidiagonalization in Julia}
