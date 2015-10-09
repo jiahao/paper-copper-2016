@@ -1,4 +1,5 @@
 .DS_Store
+*.tdo
 *.aux
 *.bbl
 *.blg
