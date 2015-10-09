@@ -115,12 +115,12 @@ method written in pure Julia.
 \STATE $\alpha_j = \left\Vert \tilde{p}_j \right\Vert_2$
 \STATE $p_j = \tilde{p}_j / \alpha_j$
 
-\STATE $\tilde{q}_{j+1} = A'p_j - \alpha_j q_j$
+\STATE $\tilde{q}_{j+1} = A^\prime p_j - \alpha_j q_j$
 \STATE $\beta_j = \left\Vert \tilde{q}_{j+1} \right\Vert_2$
 \STATE $q_{j+1} = \tilde{q}_{j+1} / \beta_j$
 
 \ENDFOR
-\RETURN $p_1, \dots, p_k, q_1, \dots, q_{k+1}, \alpha_1, \dots, \alpha_{k+1}, \beta_1, \dots, \beta_{k+1}$
+\RETURN $\left(p_1, \dots, p_k, q_1, \dots, q_{k+1},\right) \alpha_1, \dots, \alpha_{k+1}, \beta_1, \dots, \beta_{k+1}$
 \end{algorithmic}
 \end{algorithm}
 
@@ -163,28 +163,103 @@ end
 \end{lstlisting}
 \end{algorithm}
 
+Julia is a high level dynamic language for technical
+computing~\cite{Bezanson2012,Bezanson2015}. While it shares superficial
+syntactic similarities with other high level languages such as Matlab or
+Python, Julia was designed specifically for technical computing for the ground
+up, with a syntax that supports the expressiveness demanded by mathematical
+notation while facilitating compiler optimizations to generate fast machine
+code.
+
 Let's explain some feature of Julia exhibited by this code listing.
 
+\paragraph{Type arithmetic.}
+This function takes as input any $A$ that supports
+matrix-vector products of the form $Aq$ and $A^\prime p$. As such, the element
+types of $U$, $S$ and $V$ depend on the element type of $A$.
+
+\paragraph{Special matrix types.}
+Julia's base library also supports many special matrix types, such as
+\verb|Bidiagonal| for bidiagonal matrices. The \verb|Bidiagonal| constructor
+seen in this code listing creates an object that represents a bidiagonal
+matrix, but stores only the diagonal and its superdiagonal (the \verb|true|
+argument denotes that the matrix is upper bidiagonal). The generic function
+system available in Julia~\cite{Bezanson2012,Bezanson2015} allows us to define
+multimethods for functions such as \verb|svdfact| for computing the SVD
+factorization of a matrix, but without restricting the function to work only
+on ordinary dense matrices. In fact, it is precisely the definition of a
+\verb|Bidiagonal| object (called a \verb|type| in Julia) which allows us to
+specify which algorithm to run.
+
+A simplified definition of the \verb|svdfact| function in the base Julia
+library looks like this:
+
+\begin{lstlisting}
+function svdfact{T<:BlasFloat}(A::StridedMatrix{T}; thin::Bool=true)
+    U, S, V$^T$ = LAPACK.gesdd!(thin ? 'S' : 'A', copy(A))
+    SVD(U, S, V$^T$)
+end
+
+function svdfact{T<:BlasFloat}(A::Bidiagonal{T})
+    D, _, U, Vt, _, _ = LAPACK.bdsdc!(M.isupper ? 'U' : 'L',
+                        'I', copy(A.dv), copy(A.ev))
+    SVD(U, S, V$^T$)
+end
+\end{lstlisting}
+
+The \verb|svdfact| function has two methods defined. The first defines a SVD
+factorization on dense matrices as the result of LAPACK's \verb|_GESDD|
+function, wrapping the output in an \verb|SVD| object. The \verb|SVD| object itself is defined as
+
+\begin{lstlisting}
+immutable SVD{T,Tr,M<:AbstractArray} <: Factorization{T}
+    U::M
+    S::Vector{Tr}
+    V$^T$::M
+end
+\end{lstlisting}
 
 
-\section{Theory}
+annd the other on \verb|Bidiagonal| matrices. berbidiaogonal thus we
+sw
 
 
-\subsection{The basic bidiagonalization}
 
-Lanczos bidiagonalization is usually described with the following
-algorithm:
+\paragraph{Special factorization types.}
+Low cost abstractions
 
 
-\subsection{Implicit restarting}
+\section{Practical considerations}
 
+
+\subsection{Reorthogonalization}
+
+\todo{Jiahao}
+
+\subsection{Krylov-Schur restarting}
+
+\todo{Jiahao}
 
 \subsection{Error analysis}
+
+\todo{Jiahao}
+
+\subsection{Generalization to Block Lanczos}
+
+\todo{Andreas}
 
 
 \section{Results}
 
-Comparison with flashpca or randomized subspace interaction.
+Pick some specific examples
+
+Comparison with flashpca or randomized subspace interaction?
+
+
+
+\section{Conclusions}
+
+
 
 \section*{Acknowledgments}
 We thank the Julia development community for their contributions of free and
