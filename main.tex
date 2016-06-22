@@ -66,7 +66,7 @@ We describe the implementation of a practical Krylov-Schur
 
 \pagestyle{myheadings}
 \thispagestyle{plain}
-\markboth{J. CHEN, A. NOACK, J. BOLEWSKI AND A. EDELMAN}{Practical SVD in Julia}
+\markboth{J. CHEN AND A. NOACK}{Practical SVD in Julia}
 
 \listoftodos
 
@@ -341,14 +341,15 @@ Low cost abstractions
 \section{Practical considerations}
 
 
-\subsection{Reorthogonalization}
+\subsection{Partial reorthogonalization}
 
 \missingfigure{Code listing for reorthogonalizations}
 
 \todo{Jiahao}
 
-\subsection{Krylov-Schur restarting}
+\subsection{Thick restarting}
 
+We also implement the thick restart methodo
 \missingfigure{Code listing for thick restart}
 
 \todo{Jiahao}
@@ -407,6 +408,7 @@ Show error bound computations.
 
 
 
+
 \subsection{Distributed linear algebra}
 
 \missingfigure{Strong scaling for parallel linalg on some problem}
@@ -417,6 +419,48 @@ Julia/ScaLAPACK vs Julia/Elemental vs Julia/MKL vs SLEPc vs PARPACK vs Parallel 
 
 
 \todo{Andreas and Jake}
+
+
+\section{Results on genomics data matrix}
+
+\begin{table}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+\hline
+ & Algorithm & mvps & Wall time & $\beta_{final}$ & $\left\Vert \Delta\theta\right\Vert _{1}$ & $\left\Vert \Delta\theta\right\Vert _{\infty}$\tabularnewline
+\hline
+\hline
+FlashPCA1 & Block power & 2280 & 2616.1 sec. & 6.4 & $4\times10^{+4}$ & $4\times10^{+4}$\tabularnewline
+\hline
+FlashPCA2 & Block power &  &  &  &  & \tabularnewline
+\hline
+PROPACK & GKL (PRO, NR) & 298 & 264.6 & - & $4\times10^{-8}$ & $4\times10^{-8}$\tabularnewline
+\hline
+ARPACK & GKL (FRO, IR) & 355 & 858.5 & 7.8 & $6\times10^{-3}$ & $1\times10^{-3}$\tabularnewline
+\hline
+this work & GKL (FRO, TR) & 280 & 397.8 & 6.4 & $2\times10^{-3}$ & $2\times10^{-3}$\tabularnewline
+\hline
+this work & GKL (PRO, NR) & 321 & 302.4 & 15072 & $6\times10^{-4}$ & $6\times10^{-4}$\tabularnewline
+\hline
+\end{tabular}
+
+\caption{Comparing various methods for computing the top 20 principal
+components on a simulated genotype matrix of size $80000\times40000$.
+Linear algebra kernels were run on OpenBLAS v0.2.18 with 16 software threads.
+FlashPCA1 - Reimplementation in pure Julia of the published version of FlashPCA,
+FlashPCA2 - Reimplementation in pure Julia of the master version of FlashPCA available on GitHub,
+GKL - Golub--Kahan--Lanczos bidiagonalization,
+PRO - partial reorthogonalization,
+FRO - full reorthogonalization,
+NR - no restart,
+IR - implicit restart after 40 Lanczos vectors,
+TR - thick restart after 40 Lanczos vectors,
+mvps - number of matrix--vector products.
+Termination criterion set to $\Vert Y\Vert = 10^{-8}$ for FlashPCA$n$,
+and relative error in the singular values of $10^{-8}$ for the Lanczos methods.
+}
+\end{table}
+
+
 
 \section{Conclusions}
 
