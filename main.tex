@@ -423,6 +423,21 @@ Julia/ScaLAPACK vs Julia/Elemental vs Julia/MKL vs SLEPc vs PARPACK vs Parallel 
 
 \section{Results on genomics data matrix}
 
+\subsection{Spectra of genomics matrices}
+
+\begin{figure}
+\includegraphics[width=\textwidth]{fig/scree/fig-scree.pdf}
+
+\caption{Scree plot of the singular values of a genomics data matrix of size $81700\times41505$
+(black solid lines), showing the presence of a large, low rank portion
+of approximately rank 10 (inset), and an asymptotic convergence to
+a random distribution, the Marchenko-Pastur law (red dotted lines),
+describing the singular values of a random matrix with rows/columns
+ratio $\lambda=0.58$ and iid entries of mean 0 and variance $\sigma^{2}=1.33$.}
+\end{figure}
+
+\subsection{Accuracy and speed results}
+
 \begin{table}
 \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
 \hline
