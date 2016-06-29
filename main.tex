@@ -415,6 +415,70 @@ Julia/ScaLAPACK vs Julia/Elemental vs Julia/MKL vs SLEPc vs PARPACK vs Parallel 
 
 \subsection{Spectra of genomics matrices}
 
+
+We hypothesize that the spectral properties of human patient genotype data can
+be modeled the Julia code in \ref{code:model}, which captures the confounding
+effects of population stratification and kinship. The former is modeled by
+setting randomly select subblocks to the same value, whereas the latter is
+modeled by duplicating columns, thus purposely introducing linear dependence into
+the column space. This model, while simplistic, can be tuned to reproduce the
+scree plot observed in empirical data matrices and we expect that such models
+may be of interest to researchers developing numerical algorithms that lack
+access to actual data, which are often access-restricted due to clinical privacy.
+
+\begin{algorithm}
+\caption{A simple model for human genotype data matrices in Julia
+\label{code:model}}
+\begin{lstlisting}
+"""
+Inputs:
+- m: number of rows
+- n: number of columns
+- r: number of subblocks to model population stratification
+- nsignal: number of entries to represent signal
+- rkins: fraction of columns to duplicate
+
+Output:
+- A: a dense matrix of size m x n with matrix elements 0, 1 or 2
+"""
+function model(m, n, r, nsignal=round(Int,√(m*n)), rkins)
+    A = zeros(m, n)
+    #Model population stratification
+    #by randomly setting a subblock to the same value, k
+    for i=1:r
+        k = rand(0:2)
+        i1, i2 = randrange(m)
+        j1, j2 = randrange(n)
+        A[i1:i2, j1:j2] = k
+    end
+
+    #Model signal
+    for i=1:nsignal
+        A[rand(1:m), rand(1:n)] = rand(0:2)
+    end
+
+    #Model kinship by duplicating columns
+    nkins = round(Int, rkins*n)
+    for i=1:nkins
+        A[:, rand(1:n)] = A[:, rand(1:n)]
+    end
+    A
+end
+
+function randrange(n)
+    i1 = rand(1:n)
+    i2 = rand(1:n)
+    if i1 > i2
+        return i2, i1
+    else
+        return i1, i2
+    end
+end
+\end{lstlisting}
+\end{algorithm}
+
+The scree plot of a genomics matrix
+
 \begin{figure}
 \includegraphics[width=\textwidth]{fig/scree/fig-scree.pdf}
 
@@ -424,6 +488,7 @@ of approximately rank 10 (inset), and an asymptotic convergence to
 a random distribution, the Marchenko-Pastur law (red dotted lines),
 describing the singular values of a random matrix with rows/columns
 ratio $\lambda=0.58$ and iid entries of mean 0 and variance $\sigma^{2}=1.33$.}
+\label{fig:scree}
 \end{figure}
 
 \subsection{Accuracy and speed results}
