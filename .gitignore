@@ -10,6 +10,7 @@
 *.swp
 *.synctex*
 *.toc
+*.tdo
 main.pdf
 main.dvi
 
