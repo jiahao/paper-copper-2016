@@ -75,6 +75,37 @@ organizing the various methods for doing singular value decompositions in
 Julia
 
 
+\section{Confounding factors in GWAS studies}
+
+Genomics data is often encoded in a matrix expressing the number of mutations
+from a reference genome.
+The genomics matrix is indexed by gene positions on the rows and patients on the
+columns. Each matrix element counts the number of mutations a patient has from
+some reference genome. Since most human cells are at most diploid, i.e.\ have
+two sets of chromosomes,
+the matrix elements can only be 0, 1, or 2 (or missing).
+
+There are three major confounding sources of variation which are considered in
+the analysis of human genome data:
+
+\paragraph{Population stratification}
+In linear algebraic terms, the genomics matrix will have a low rank component
+with large singular values.
+
+\paragraph{Kinship}
+Kinship, or local ancestry, consists of
+The genomics matrix is expected to have (near) linear dependencies in its columns,
+leading to the presence of several singular values that are very small or zero.
+
+\paragraph{Linkage disequilibrium (LD)}
+LD occurs when mutations in genes are not independent across genome positions.
+The correct treatment of LD requires separate statistical modeling to simulate
+the dependencies introduced by the biological processes of gene
+recombinations~\cite{Li2003}.
+LD is usually treated with a separate preprocessing step to correct for false
+positives in downstream statistical analyses~\cite{Sankararaman2008}.
+We therefore do not consider its treatment in the scope of our discussion.
+
 \section{GWAS}
 Genome wide association studies (GWAS) seek to associate gene variation with variations in outcome variables typically measuring a quantity related to an illness. The typical measurement for the gene variation in the genotype at different locations in the genome. Not all locations in the genome have variation in the genotype across humans so a GWAS only includes locations with variation. Locations in the genome with variation are called single nucleotide polymorphisms (SNPs) and often the explanatory data in a GWAS is simply called SNP data. The various outcome variables in a GWAS are typically called phenotypes so in short GWASs examine the relation between genotypes and phenotypes. Often in statistical studies when data is observed passively there can be doubt about the causal direction for the variables included in the analysis. However, it is generally accepted that genotypes cannot be caused by other factors included in the analysis and consequently the correlation between genotypes and phenotype could in theory be considered causal.
 
@@ -599,6 +630,6 @@ this paper is available as the \verb|svdl| function in the
 package. J.C. would also like to thank Jack Poulson (Stanford), David Silvester
 (Manchester), and Alex Townsend (MIT) for many insightful discussions.
 
-\bibliography{svd}
+\bibliography{bio,svd}
 
 \end{document}
