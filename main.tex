@@ -78,7 +78,7 @@ organizing the various methods for doing singular value decompositions in
 Julia
 
 
-\section{Confounding factors in GWAS studies}
+\section{Principal components of genome data}
 
 Genomics data is often encoded in a matrix expressing the number of mutations
 from a reference genome.
@@ -88,16 +88,34 @@ some reference genome. Since most human cells are at most diploid, i.e.\ have
 two sets of chromosomes,
 the matrix elements can only be 0, 1, or 2 (or missing).
 
-There are three major confounding sources of variation which are considered in
+Principal component analysis has been used both to understand variation in
+the statistics of human genes, as well as to correct for unwanted variations.
+Perhaps most famously, principal components of human genome data have been used
+to reconstruct the history of human evolution by identifying population
+substructure and their relationship to other factors such as geography~\cite{Menozzi1978,Cavalli1994}
+(but see \cite{Novembre2008} for criticisms of this approach).
+
+In the context of genome-wide association studies (GWAS) for personalized
+medicine, the variations due to population substructure now become confounding
+factors which bias the study of which genes are correlated with desired clinical
+outcomes (known as ``comorbidities'')~\cite[Ch. 8]{Laird2011}.
+There are two major confounding sources of variation which are considered in
 the analysis of human genome data:
 
-\paragraph{Population stratification}
+\paragraph{Population stratification/admixing}
+Population stratification is the phenomenon of common genetic variation within
+mutually exclusive subpopulations defined along racial, ethnic or geographic
+divisions~\cite{Pritchard1999,Cardon2003}. (Admixing is a relaxation of the mutual exclusion constraint~\cite{Devlin1999,Sankararaman2008}.)
 In linear algebraic terms, the genomics matrix will have a low rank component
 with large singular values.
 
-\paragraph{Kinship}
-Kinship, or local ancestry, consists of
-The genomics matrix is expected to have (near) linear dependencies in its columns,
+\paragraph{Cryptic relatedness}
+Sometimes called kinship or inbreeding, cryptic relatedness is an increase in
+sampling bias in the columns (human genomes) produced by having common ancestors,
+thus increasing the nominally observed frequency of certain
+mutations~\cite{Voight2005,Astle2009}. Relatedness is usually detected and removed in
+a separate preprocessing step~\cite{PLINK}. Any remaining related samples will
+result in (near) linear dependencies in the columns of the genomic matrix,
 leading to the presence of several singular values that are very small or zero.
 
 \paragraph{Linkage disequilibrium (LD)}
@@ -105,8 +123,6 @@ LD occurs when mutations in genes are not independent across genome positions.
 The correct treatment of LD requires separate statistical modeling to simulate
 the dependencies introduced by the biological processes of gene
 recombinations~\cite{Li2003}.
-LD is usually treated with a separate preprocessing step to correct for false
-positives in downstream statistical analyses~\cite{Sankararaman2008}.
 We therefore do not consider its treatment in the scope of our discussion.
 
 \section{GWAS}
