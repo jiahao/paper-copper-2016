@@ -413,6 +413,59 @@ Julia/ScaLAPACK vs Julia/Elemental vs Julia/MKL vs SLEPc vs PARPACK vs Parallel 
 
 \section{Results on genomics data matrix}
 
+
+\subsection{The Marchenko-Pastur law}
+
+The Marchenko-Pastur law describes the distribution of governs the eigenvalues
+of a random covariance matrix $Y=XX^T$ formed from a data matrix $X$
+of iid elements with mean 0 and finite variance $\sigma^2$.
+Let $\rho$ be the ratio of the number of rows of $X$ to the number of columns of $X$.
+Then, the nonzero eigenvalues follow the distribution
+%
+\begin{equation}
+%    \label{eq:mplaw-ev}
+    p_e(\xi) = \frac {\sqrt{(\lambda_+-\xi)(\xi-\lambda_-)}} {2 \pi \sigma^2 \lambda x}
+\end{equation}
+%
+where
+$\lambda_+ = \sigma^2(1+\sqrt{\rho})^2$ and
+$\lambda_- = \sigma^2(1-\sqrt{\rho})^2$.
+
+When written in terms of the probability density of the singular values of $X$,
+the law reads
+%
+\begin{equation}
+%    \label{eq:mplaw-sv}
+    p_s(x) = \frac {\sqrt{(\sigma_+^2-x^2)(x^2-\sigma_-^2)}} {\pi \sigma \min(1, \lambda) x}
+\end{equation}
+%
+where
+$\sigma_+ = \sqrt{\lambda_+} = \sigma(1+\sqrt{\rho})$ and
+$\sigma_- = \sqrt{\lambda_-} = \sigma\vert1-\sqrt{\rho}\vert$.
+
+Figure~\ref{fig:mplaw} shows typical density plots for random eigenvalues
+and singular values.
+
+% Preview source code for paragraph 0
+
+\begin{figure}
+\caption{Marchenko-Pastur law for $\rho=1.5$ (black lines) for the nonzero
+eigenvalues of a random covariance matrix ($XX^{T}$) and the singular
+values of $X$ for iid matrix elements with mean 0 and variance 1
+(black lines). Shown for comparison are corresponding histograms (grey
+bars) of numerically sampled eigenvalues and singular vectors from
+a numerically sampled random matrix $X$ of size $1000\times667$,
+with iid Gaussian entries of mean 0 and variance 1.
+\label{fig:mplaw}
+}
+
+\includegraphics[width=0.45\textwidth]{fig/mplaw/fig-mplaw-ev}
+%
+\includegraphics[width=0.45\textwidth]{fig/mplaw/fig-mplaw-sv}
+\end{figure}
+
+
+
 \subsection{Spectra of genomics matrices}
 
 
