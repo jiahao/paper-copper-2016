@@ -169,21 +169,11 @@ In many applications, a few pricipal components of the covariance matrix of the 
 
 \section{Software for computing the SVD of genomics data}
 
-For reasons that are not understood by the us, the software stack for GWAS is generally based on command line tools written completely in C/C++. Not only is the core computational algorithm written in C/C++ but also much of the pre- and postprocessing of the data. The datasets can be large but and the computations at times heavy but it has been a surprise to learn the extend to which analyses are carried out directly from the command line and not higher level languages like Matlab or Python. This choice seems to limit the tools available to the analysts because unless she is a C/C++ programmer, she is restricted to the set of options included in the command line tool.
+The software stack for GWAS is generally based on command line tools written completely in C/C++. Not only is the core computational algorithm written in C/C++ but also much of the pre- and postprocessing of the data. The datasets can be large but and the computations at times heavy but it has been a surprise to learn the extend to which analyses are carried out directly from the command line instead of using higher level languages like Matlab, R, or Python. This choice seems to limit the tools available to the analysts because, unless he is a C/C++ programmer, the programmer is restricted to the set of options included in the command line tool.
 
-\paragraph{Plink}
-Hey ho!
+Two major packages exist for computing the PCA in the GWAS software stack. The package \emph{EIGENSOFT} accompanied~\cite{patterson2006population} which popularized the use of PCA in GWAS. In the original version of the package, the routine \texttt{smartpca} for computing the PCA of a SNP matrix was based on an eigenvalue solver from LAPACK. In consequence, all the eigenvalues and vectors of the SNP matrix were computed even though only a few of them were used as principal components.
 
-\paragraph{SmartPCA}
-
-\paragraph{FlashPCA}
-
-\begin{itemize}
-    \item Plink 1 and 2
-    \item SmartPCA
-    \item FlashPCA
-\end{itemize}
-
+More recently, \emph{FlashPCA}~\cite{abraham2014fast}, has emerged as a potentially faster alternative to EIGENSOFT's \texttt{smartpca}. The PCA routine is based on a truncated SVD algorithm described in~\cite{halko2011finding}. More specifically, FlashPCA uses a subspace iteration scheme with orthogonalization by QR in each iteration. The convergence criterion is based on the Frobenius norm of the changes to the orthogonal basis. The QR orthogonalization step in the implementation of FlashPCA routine deviates from the algorithm in described~\cite{abraham2014fast} which only normalizes columnwise. Our conjecture was that this change was made to avoid loss of orthogonality in the subspace basis and the author of the package has confirmed this to us. In consequence, the timings in~\cite{abraham2014fast} do not correspond to the performance of the software run with default settings since the QR orthogonalization is much slower than the columnwise normalization. Furthermore, a degenerate basis might also converge much faster because it eventually just converges to the single largest eigenvalue.
 
 \section{Introduction}
 
