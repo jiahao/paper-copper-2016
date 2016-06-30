@@ -144,7 +144,8 @@ implications for human evolution in relation to other factors such as
 geography and history~\cite{Menozzi1978,Cavalli1994,Novembre2008}.
 However, we will focus on a more modern use of principal components (PCs) in
 representing confounding effects in the statistical modeling of genome-wide
-association studies (GWASs) for personalized medicine~\cite{Patterson2006}.
+association studies (GWASs) for personalized
+medicine~\cite{Chen2003,Patterson2006,Price2006,Zhu2002,Zhang2003}.
 
 Genomics matrices form an interesting use case for the classical techniques of
 numerical linear algebra, as the amount of sequenced genome data grows
@@ -495,7 +496,11 @@ the top singular vectors, which can be captured even in the very crude random
 matrix model of Algorithm~\ref{code:model}. The top few principal components,
 which by construction capture the largest components of the variability, are
 good candidates for modeling the unwanted variation as described in
-Section~\ref{sec:regress-correction}. Iterative eigenvalue (or singular value)
+Section~\ref{sec:regress-correction} and have been used in the statistical
+genetics community for this
+purpose~\cite{Chen2003,Patterson2006,Price2006,Zhu2002,Zhang2003}.
+
+Iterative eigenvalue (or singular value)
 methods~\cite{Bai2000} are therefore computationally efficient choices for
 determining these principal components, as only a handful of them are needed.
 
