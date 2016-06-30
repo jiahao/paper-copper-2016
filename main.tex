@@ -31,6 +31,10 @@
 \usepackage{pgfplots}
 \usepackage{subcaption}
 
+\usepackage{pifont}
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+
 \title{Fast computation of the principal components of genomics data in Julia
     \thanks{This
         work was supported by the Intel Science and Technology Center for Big Data.
@@ -293,7 +297,16 @@ Two major packages exist for computing the PCA in the GWAS software stack. The p
 
 More recently, \emph{FlashPCA}~\cite{abraham2014fast}, has emerged as a potentially faster alternative to EIGENSOFT's \texttt{smartpca}. The PCA routine is based on a truncated SVD algorithm described in~\cite{halko2011finding}. More specifically, FlashPCA uses a subspace iteration scheme with orthogonalization by QR in each iteration. The convergence criterion is based on the Frobenius norm of the changes to the orthogonal basis. The QR orthogonalization step in the implementation of FlashPCA routine deviates from the algorithm in described~\cite{abraham2014fast} which only normalizes columnwise. Our conjecture was that this change was made to avoid loss of orthogonality in the subspace basis and the author of the package has confirmed this to us. In consequence, the timings in~\cite{abraham2014fast} do not correspond to the performance of the software run with default settings since the QR orthogonalization is much slower than the columnwise normalization. Furthermore, a degenerate basis might also converge much faster because it eventually just converges to the single largest eigenvalue.
 
-
+\begin{table}
+    \centering
+    \begin{tabular}{ccc}
+        Software  & Algorithm                              & Used in genomics \\
+        EIGENSOFT & Householder bidiagonalization (LAPACK) & \cmark \\
+        FlashPCA  & Block power                            & \cmark \\
+        ARPACK    & Lanczos, $X'X$                         & \xmark \\
+        PROPACK   & Lanczos                                & \xmark
+    \end{tabular}
+\end{table}
 
 \section{A simple model for genomics data}
 
@@ -591,13 +604,15 @@ iteration of FlashPCA.
 \section{Speed and accuracy results on synthetic genomics data}
 
 \subsection{Comparing TSVD and FlashPCA}
-For our synthetic dataset the time difference between the two methods is large. The initial preprocessing steps where the matrix is read and scaled contribute very little to any of the methods. For FlashPCA, the running time consists of two major components which is an initial matrix multiply, $XX'$, and the subsequent subspace iterations. By tracking the convergence criterion at each iteration it is clear that the convergence is very slow.
+For our synthetic dataset the time difference between the two methods is large. The initial preprocessing steps where the matrix is read and scaled contribute very little to any of the methods. For FlashPCA, the running time consists of two major components which is an initial matrix multiply, $XX'$, and the subsequent subspace iterations. Forming the matrix $XX'$ is the default option in FlashPCA and might be a relict from the time when the number of gene positions (columns) was much larger the number of sample (rows). For and aspect ration of $\frac{1}{2}$ this computation is expensive. In addition to the pure flop expense in computing $XX'$, on our system, there is a large penalty for using Eigen relative to MKL where the former executes in 926 and the latter in 306 seconds for the same number of threads. In contrast to the algorithmic differences, this difference might be very system dependent.
+
+The largest component of the running time for FlashPCA is the subspace iterations. By tracking the convergence criterion at each iteration it is clear that the convergence is very slow. Figure~\ref{fig:conv} shows the convergence of the FlashPCA with QR orthogonalization and our TSVD algorithm.
 
 \begin{table}
     \caption{Running time in seconds for 41505x81700 SNP matrix}
     \centering
     \begin{tabular}{lrr}
-                                   & FlashPCA QR & Julia Lanczos \\
+                                   & FlashPCA QR & Julia PO \\
         Preprocessing              &   61        & 54            \\
         Matrix multiplication      &  926        & .             \\
         Subspace/Lanczos iteration & 1935        & 37            \\
@@ -625,6 +640,7 @@ For our synthetic dataset the time difference between the two methods is large. 
         \caption{Julia-Lanczos}
     \end{subfigure}
     \caption{Convergence}
+    \label{fig:conv}
 \end{figure}
 
 
@@ -675,7 +691,15 @@ and relative error in the singular values of $10^{-8}$ for the Lanczos methods.
 \includegraphics[width=\textwidth]{fig/thickrestarted/fig-conv}
 \end{figure}
 
-
+\begin{figure}
+    \centering
+    \begin{tikzpicture}
+        \begin{semilogyaxis}[width=10cm, height=5cm]
+            \addplot[very thick] file {data/condNumberNorm.txt};
+        \end{semilogyaxis}
+    \end{tikzpicture}
+    \caption{Condition number of the matrix of subspace basis per iteration for FlashPCA without QR}
+\end{figure}
 
 \section{Conclusions}
 

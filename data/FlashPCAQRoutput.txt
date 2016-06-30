@@ -1,5 +1,5 @@
 ➜  ~ /patslab1/programs/flashpca/flashpca --v --bfile simGeno --numthreads 24 --outval s$
-mvalsFlashQR.txt --outvec simvalsFlashQR.txt
+mvalsFlashQR.txt --outvec simvecsFlashQR.txt
 [Thu Jun 30 12:45:21 2016] arguments: flashpca /patslab1/programs/flashpca/flashpca --v $
 -bfile simGeno --numthreads 24 --outval simvalsFlashQR.txt --outvec simvalsFlashQR.txt
 [Thu Jun 30 12:45:21 2016] Start flashpca (version 1.2)
