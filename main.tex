@@ -266,7 +266,7 @@ where is assumed that $\Var(\eta|X)=\Sigma_\eta$ and $\Var(\xi|X)=\sigma^2_\xi I
 
 One way to produce a reliable estimate of the variance of $\hat{\beta}$ is to come up with a set of variables $z_1,\dots,z_k$ that proxies the correlation between the observations, i.e.\ $\eta=Z\gamma$. By simply including the variables $z_1,\dots,z_k$ in the regression model, it possible to remove the correlation which distorts the variance estimate for $\hat{\beta}$. For the regression $y|X,Z$, we get the least squares estimator
 \begin{equation*}
-    \hat{\theta} = \begin{pmatrix}\hat{\beta} \\ \hat{\gamma}\end{pmatrix} =
+    \begin{pmatrix}\hat{\beta} \\ \hat{\gamma}\end{pmatrix} =
     \begin{pmatrix}
         X^TX & X^TZ \\ Z^TX & Z^TZ
     \end{pmatrix}^{-1}
@@ -284,7 +284,7 @@ One way to produce a reliable estimate of the variance of $\hat{\beta}$ is to co
 \end{equation*}
 which has variance
 \begin{equation*}
-    \Var(\hat{\theta}|X,Z)=\sigma_\xi^2
+    \Var\left(\begin{pmatrix}\hat{\beta} \\ \hat{\gamma}\end{pmatrix}|X,Z\right)=\sigma_\xi^2
         \begin{pmatrix} X^TX & X^TZ \\ Z^TX & Z^TZ \end{pmatrix}^{-1}
 \end{equation*}.
 
