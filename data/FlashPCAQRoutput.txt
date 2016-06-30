@@ -1,0 +1,202 @@
+➜  ~ /patslab1/programs/flashpca/flashpca --v --bfile simGeno --numthreads 24 --outval s$
+mvalsFlashQR.txt --outvec simvalsFlashQR.txt
+[Thu Jun 30 12:45:21 2016] arguments: flashpca /patslab1/programs/flashpca/flashpca --v $
+-bfile simGeno --numthreads 24 --outval simvalsFlashQR.txt --outvec simvalsFlashQR.txt
+[Thu Jun 30 12:45:21 2016] Start flashpca (version 1.2)
+[Thu Jun 30 12:45:21 2016] Using 24 OpenMP threads
+[Thu Jun 30 12:45:21 2016] seed: 1
+[Thu Jun 30 12:45:21 2016] Detected pheno file simGeno.fam, 41505 samples
+[Thu Jun 30 12:45:21 2016] Analyzing BED file 'simGeno.bed', found 81700 SNPs
+[Thu Jun 30 12:45:21 2016] Reading BED file 'simGeno.bed'
+[Thu Jun 30 12:45:30 2016] Detected BED file: simGeno.bed with 847800900 bytes, 41505 sa$
+ples, 81700 SNPs.
+[Thu Jun 30 12:45:48 2016] Loaded genotypes: 41505 samples, 81700 SNPs
+[Thu Jun 30 12:45:48 2016] PCA begin
+[Thu Jun 30 12:45:48 2016] Transpose: no
+[Thu Jun 30 12:45:48 2016] standardizing matrix (BINOM) p: 81700
+[Thu Jun 30 12:46:22 2016] dim(Y): 41505 x 200
+[Thu Jun 30 12:46:22 2016] dim(X): 41505 x 81700
+[Thu Jun 30 12:46:22 2016] Using linear kernel
+[Thu Jun 30 13:01:48 2016] dim(K): 41505 x 41505
+[Thu Jun 30 13:01:48 2016] Trace(K): 208643 (N: 41505)
+[Thu Jun 30 13:01:48 2016] iter 0 (orthogonalising) 4.8292e-05
+[Thu Jun 30 13:01:59 2016] iter 1 (orthogonalising) 4.61776e-05
+[Thu Jun 30 13:02:11 2016] iter 2 (orthogonalising) 4.53372e-05
+[Thu Jun 30 13:02:23 2016] iter 3 (orthogonalising) 4.31831e-05
+[Thu Jun 30 13:02:36 2016] iter 4 (orthogonalising) 4.41081e-05
+[Thu Jun 30 13:02:47 2016] iter 5 (orthogonalising) 4.12291e-05
+[Thu Jun 30 13:03:00 2016] iter 6 (orthogonalising) 4.02611e-05
+[Thu Jun 30 13:03:11 2016] iter 7 (orthogonalising) 3.88123e-05
+[Thu Jun 30 13:03:22 2016] iter 8 (orthogonalising) 3.52091e-05
+[Thu Jun 30 13:03:34 2016] iter 9 (orthogonalising) 3.64099e-05
+[Thu Jun 30 13:03:45 2016] iter 10 (orthogonalising) 3.52011e-05
+[Thu Jun 30 13:03:56 2016] iter 11 (orthogonalising) 3.37462e-05
+[Thu Jun 30 13:04:08 2016] iter 12 (orthogonalising) 3.08683e-05
+[Thu Jun 30 13:04:19 2016] iter 13 (orthogonalising) 3.2307e-05
+[Thu Jun 30 13:04:31 2016] iter 14 (orthogonalising) 2.65299e-05
+[Thu Jun 30 13:04:42 2016] iter 15 (orthogonalising) 2.67601e-05
+[Thu Jun 30 13:04:54 2016] iter 16 (orthogonalising) 2.21897e-05
+[Thu Jun 30 13:05:05 2016] iter 17 (orthogonalising) 2.57911e-05
+[Thu Jun 30 13:05:17 2016] iter 18 (orthogonalising) 2.26712e-05
+[Thu Jun 30 13:05:28 2016] iter 19 (orthogonalising) 2.338e-05
+[Thu Jun 30 13:05:40 2016] iter 20 (orthogonalising) 1.90486e-05
+[Thu Jun 30 13:05:51 2016] iter 21 (orthogonalising) 2.36229e-05
+[Thu Jun 30 13:06:02 2016] iter 22 (orthogonalising) 2.00106e-05
+[Thu Jun 30 13:06:14 2016] iter 23 (orthogonalising) 1.8811e-05
+[Thu Jun 30 13:06:28 2016] iter 24 (orthogonalising) 1.61586e-05
+[Thu Jun 30 13:06:44 2016] iter 25 (orthogonalising) 1.61552e-05
+[Thu Jun 30 13:06:58 2016] iter 26 (orthogonalising) 1.9287e-05
+[Thu Jun 30 13:07:09 2016] iter 27 (orthogonalising) 1.47112e-05
+[Thu Jun 30 13:07:21 2016] iter 28 (orthogonalising) 1.37439e-05
+[Thu Jun 30 13:07:32 2016] iter 29 (orthogonalising) 1.85578e-05
+[Thu Jun 30 13:07:43 2016] iter 30 (orthogonalising) 1.51891e-05
+[Thu Jun 30 13:07:55 2016] iter 31 (orthogonalising) 1.66322e-05
+[Thu Jun 30 13:08:07 2016] iter 32 (orthogonalising) 1.47099e-05
+[Thu Jun 30 13:08:18 2016] iter 33 (orthogonalising) 1.08496e-05
+[Thu Jun 30 13:08:30 2016] iter 34 (orthogonalising) 1.54299e-05
+[Thu Jun 30 13:08:42 2016] iter 35 (orthogonalising) 1.51853e-05
+[Thu Jun 30 13:08:54 2016] iter 36 (orthogonalising) 9.64207e-06
+[Thu Jun 30 13:09:05 2016] iter 37 (orthogonalising) 1.10921e-05
+[Thu Jun 30 13:09:17 2016] iter 38 (orthogonalising) 1.51834e-05
+[Thu Jun 30 13:09:29 2016] iter 39 (orthogonalising) 1.06065e-05
+[Thu Jun 30 13:09:40 2016] iter 40 (orthogonalising) 9.16247e-06
+[Thu Jun 30 13:09:52 2016] iter 41 (orthogonalising) 1.10896e-05
+[Thu Jun 30 13:10:03 2016] iter 42 (orthogonalising) 1.10887e-05
+[Thu Jun 30 13:10:15 2016] iter 43 (orthogonalising) 1.10857e-05
+[Thu Jun 30 13:10:26 2016] iter 44 (orthogonalising) 1.22928e-05
+[Thu Jun 30 13:10:38 2016] iter 45 (orthogonalising) 8.4362e-06
+[Thu Jun 30 13:10:50 2016] iter 46 (orthogonalising) 1.15694e-05
+[Thu Jun 30 13:11:02 2016] iter 47 (orthogonalising) 1.22941e-05
+[Thu Jun 30 13:11:13 2016] iter 48 (orthogonalising) 1.20513e-05
+[Thu Jun 30 13:11:25 2016] iter 49 (orthogonalising) 9.40007e-06
+[Thu Jun 30 13:11:37 2016] iter 50 (orthogonalising) 8.67898e-06
+[Thu Jun 30 13:11:48 2016] iter 51 (orthogonalising) 7.47459e-06
+[Thu Jun 30 13:11:59 2016] iter 52 (orthogonalising) 7.47534e-06
+[Thu Jun 30 13:12:11 2016] iter 53 (orthogonalising) 5.78857e-06
+[Thu Jun 30 13:12:23 2016] iter 54 (orthogonalising) 6.02646e-06
+[Thu Jun 30 13:12:34 2016] iter 55 (orthogonalising) 1.06036e-05
+[Thu Jun 30 13:12:46 2016] iter 56 (orthogonalising) 8.91909e-06
+[Thu Jun 30 13:12:58 2016] iter 57 (orthogonalising) 3.85925e-06
+[Thu Jun 30 13:13:09 2016] iter 58 (orthogonalising) 8.43592e-06
+[Thu Jun 30 13:13:21 2016] iter 59 (orthogonalising) 7.23219e-06
+[Thu Jun 30 13:13:33 2016] iter 60 (orthogonalising) 6.26759e-06
+[Thu Jun 30 13:13:44 2016] iter 61 (orthogonalising) 6.26815e-06
+[Thu Jun 30 13:13:56 2016] iter 62 (orthogonalising) 8.43446e-06
+[Thu Jun 30 13:14:07 2016] iter 63 (orthogonalising) 8.43539e-06
+[Thu Jun 30 13:14:19 2016] iter 64 (orthogonalising) 6.26627e-06
+[Thu Jun 30 13:14:30 2016] iter 65 (orthogonalising) 4.09973e-06
+[Thu Jun 30 13:14:41 2016] iter 66 (orthogonalising) 5.54442e-06
+[Thu Jun 30 13:14:53 2016] iter 67 (orthogonalising) 8.67495e-06
+[Thu Jun 30 13:15:04 2016] iter 68 (orthogonalising) 4.82156e-06
+[Thu Jun 30 13:15:16 2016] iter 69 (orthogonalising) 5.06277e-06
+[Thu Jun 30 13:15:27 2016] iter 70 (orthogonalising) 5.06325e-06
+[Thu Jun 30 13:15:38 2016] iter 71 (orthogonalising) 6.02632e-06
+[Thu Jun 30 13:15:50 2016] iter 72 (orthogonalising) 3.85853e-06
+[Thu Jun 30 13:16:01 2016] iter 73 (orthogonalising) 5.30356e-06
+[Thu Jun 30 13:16:12 2016] iter 74 (orthogonalising) 5.06191e-06
+[Thu Jun 30 13:16:24 2016] iter 75 (orthogonalising) 7.22992e-06
+[Thu Jun 30 13:16:35 2016] iter 76 (orthogonalising) 7.47124e-06
+[Thu Jun 30 13:16:46 2016] iter 77 (orthogonalising) 8.19317e-06
+[Thu Jun 30 13:16:58 2016] iter 78 (orthogonalising) 5.30354e-06
+[Thu Jun 30 13:17:09 2016] iter 79 (orthogonalising) 6.2671e-06
+[Thu Jun 30 13:17:21 2016] iter 80 (orthogonalising) 4.33775e-06
+[Thu Jun 30 13:17:33 2016] iter 81 (orthogonalising) 3.13471e-06
+[Thu Jun 30 13:17:45 2016] iter 82 (orthogonalising) 3.85652e-06
+[Thu Jun 30 13:17:57 2016] iter 83 (orthogonalising) 3.37444e-06
+[Thu Jun 30 13:18:08 2016] iter 84 (orthogonalising) 5.54372e-06
+[Thu Jun 30 13:18:20 2016] iter 85 (orthogonalising) 6.26686e-06
+[Thu Jun 30 13:18:32 2016] iter 86 (orthogonalising) 2.41163e-06
+[Thu Jun 30 13:18:44 2016] iter 87 (orthogonalising) 1.92879e-06
+[Thu Jun 30 13:18:55 2016] iter 88 (orthogonalising) 4.58048e-06
+[Thu Jun 30 13:19:06 2016] iter 89 (orthogonalising) 5.30228e-06
+[Thu Jun 30 13:19:18 2016] iter 90 (orthogonalising) 3.85483e-06
+[Thu Jun 30 13:19:29 2016] iter 91 (orthogonalising) 3.37509e-06
+[Thu Jun 30 13:19:41 2016] iter 92 (orthogonalising) 3.37492e-06
+[Thu Jun 30 13:19:52 2016] iter 93 (orthogonalising) 2.41171e-06
+[Thu Jun 30 13:20:04 2016] iter 94 (orthogonalising) 2.41095e-06
+[Thu Jun 30 13:20:15 2016] iter 95 (orthogonalising) 6.26533e-06
+[Thu Jun 30 13:20:26 2016] iter 96 (orthogonalising) 2.89348e-06
+[Thu Jun 30 13:20:37 2016] iter 97 (orthogonalising) 6.98904e-06
+[Thu Jun 30 13:20:49 2016] iter 98 (orthogonalising) 4.57854e-06
+[Thu Jun 30 13:21:00 2016] iter 99 (orthogonalising) 3.37527e-06
+[Thu Jun 30 13:21:11 2016] iter 100 (orthogonalising) 4.8192e-06
+[Thu Jun 30 13:21:23 2016] iter 101 (orthogonalising) 1.44753e-06
+[Thu Jun 30 13:21:34 2016] iter 102 (orthogonalising) 5.78392e-06
+[Thu Jun 30 13:21:45 2016] iter 103 (orthogonalising) 2.89223e-06
+[Thu Jun 30 13:21:56 2016] iter 104 (orthogonalising) 2.89302e-06
+[Thu Jun 30 13:22:08 2016] iter 105 (orthogonalising) 2.89219e-06
+[Thu Jun 30 13:22:19 2016] iter 106 (orthogonalising) 3.37419e-06
+[Thu Jun 30 13:22:30 2016] iter 107 (orthogonalising) 3.85616e-06
+[Thu Jun 30 13:22:42 2016] iter 108 (orthogonalising) 1.92776e-06
+[Thu Jun 30 13:22:53 2016] iter 109 (orthogonalising) 2.8926e-06
+[Thu Jun 30 13:23:04 2016] iter 110 (orthogonalising) 1.44669e-06
+[Thu Jun 30 13:23:15 2016] iter 111 (orthogonalising) 5.06102e-06
+[Thu Jun 30 13:23:27 2016] iter 112 (orthogonalising) 2.89236e-06
+[Thu Jun 30 13:23:38 2016] iter 113 (orthogonalising) 4.33804e-06
+[Thu Jun 30 13:23:49 2016] iter 114 (orthogonalising) 2.89204e-06
+[Thu Jun 30 13:24:01 2016] iter 115 (orthogonalising) 4.82082e-06
+[Thu Jun 30 13:24:12 2016] iter 116 (orthogonalising) 1.92802e-06
+[Thu Jun 30 13:24:23 2016] iter 117 (orthogonalising) 4.33777e-06
+[Thu Jun 30 13:24:34 2016] iter 118 (orthogonalising) 2.89142e-06
+[Thu Jun 30 13:24:46 2016] iter 119 (orthogonalising) 2.41044e-06
+[Thu Jun 30 13:24:57 2016] iter 120 (orthogonalising) 9.65052e-07
+[Thu Jun 30 13:25:09 2016] iter 121 (orthogonalising) 1.92912e-06
+[Thu Jun 30 13:25:20 2016] iter 122 (orthogonalising) 2.41061e-06
+[Thu Jun 30 13:25:31 2016] iter 123 (orthogonalising) 4.33743e-06
+[Thu Jun 30 13:25:43 2016] iter 124 (orthogonalising) 3.37418e-06
+[Thu Jun 30 13:25:54 2016] iter 125 (orthogonalising) 1.92848e-06
+[Thu Jun 30 13:26:05 2016] iter 126 (orthogonalising) 4.33754e-06
+[Thu Jun 30 13:26:17 2016] iter 127 (orthogonalising) 3.37405e-06
+[Thu Jun 30 13:26:28 2016] iter 128 (orthogonalising) 4.09674e-06
+[Thu Jun 30 13:26:39 2016] iter 129 (orthogonalising) 1.44661e-06
+[Thu Jun 30 13:26:50 2016] iter 130 (orthogonalising) 4.33754e-06
+[Thu Jun 30 13:27:02 2016] iter 131 (orthogonalising) 2.41004e-06
+[Thu Jun 30 13:27:13 2016] iter 132 (orthogonalising) 9.64941e-07
+[Thu Jun 30 13:27:25 2016] iter 133 (orthogonalising) 1.68699e-06
+[Thu Jun 30 13:27:37 2016] iter 134 (orthogonalising) 2.8918e-06
+[Thu Jun 30 13:27:48 2016] iter 135 (orthogonalising) 1.92829e-06
+[Thu Jun 30 13:28:00 2016] iter 136 (orthogonalising) 2.65077e-06
+[Thu Jun 30 13:28:11 2016] iter 137 (orthogonalising) 1.44644e-06
+[Thu Jun 30 13:28:23 2016] iter 138 (orthogonalising) 3.85485e-06
+[Thu Jun 30 13:28:35 2016] iter 139 (orthogonalising) 1.92776e-06
+[Thu Jun 30 13:28:46 2016] iter 140 (orthogonalising) 9.64509e-07
+[Thu Jun 30 13:28:58 2016] iter 141 (orthogonalising) 1.92897e-06
+[Thu Jun 30 13:29:09 2016] iter 142 (orthogonalising) 1.92821e-06
+[Thu Jun 30 13:29:21 2016] iter 143 (orthogonalising) 1.92837e-06
+[Thu Jun 30 13:29:32 2016] iter 144 (orthogonalising) 1.92816e-06
+[Thu Jun 30 13:29:44 2016] iter 145 (orthogonalising) 1.92835e-06
+[Thu Jun 30 13:29:55 2016] iter 146 (orthogonalising) 4.82468e-07
+[Thu Jun 30 13:30:07 2016] iter 147 (orthogonalising) 2.41012e-06
+[Thu Jun 30 13:30:18 2016] iter 148 (orthogonalising) 9.64178e-07
+[Thu Jun 30 13:30:29 2016] iter 149 (orthogonalising) 2.40993e-06
+[Thu Jun 30 13:30:40 2016] iter 150 (orthogonalising) 9.64502e-07
+[Thu Jun 30 13:30:52 2016] iter 151 (orthogonalising) 1.44626e-06
+[Thu Jun 30 13:31:03 2016] iter 152 (orthogonalising) 1.92752e-06
+[Thu Jun 30 13:31:14 2016] iter 153 (orthogonalising) 9.64132e-07
+[Thu Jun 30 13:31:25 2016] iter 154 (orthogonalising) 2.41059e-06
+[Thu Jun 30 13:31:36 2016] iter 155 (orthogonalising) 9.64412e-07
+[Thu Jun 30 13:31:48 2016] iter 156 (orthogonalising) 9.64356e-07
+[Thu Jun 30 13:31:59 2016] iter 157 (orthogonalising) 1.44613e-06
+[Thu Jun 30 13:32:10 2016] iter 158 (orthogonalising) 9.64471e-07
+[Thu Jun 30 13:32:21 2016] iter 159 (orthogonalising) 1.44619e-06
+[Thu Jun 30 13:32:32 2016] iter 160 (orthogonalising) 2.40986e-06
+[Thu Jun 30 13:32:44 2016] iter 161 (orthogonalising) 1.92805e-06
+[Thu Jun 30 13:32:55 2016] iter 162 (orthogonalising) 1.92739e-06
+[Thu Jun 30 13:33:06 2016] iter 163 (orthogonalising) 9.64305e-07
+[Thu Jun 30 13:33:17 2016] iter 164 (orthogonalising) 2.89109e-06
+[Thu Jun 30 13:33:29 2016] iter 165 (orthogonalising) 9.64293e-07
+[Thu Jun 30 13:33:41 2016] iter 166 (orthogonalising) 9.63863e-07
+[Thu Jun 30 13:33:52 2016] iter 167 (orthogonalising) 5.51983e-10
+[Thu Jun 30 13:34:03 2016] QR begin
+[Thu Jun 30 13:34:05 2016] dim(Q): 41505 x 200
+[Thu Jun 30 13:34:05 2016] QR done
+[Thu Jun 30 13:34:12 2016] dim(B): 200 x 81700
+[Thu Jun 30 13:34:12 2016] Eigen-decomposition begin
+[Thu Jun 30 13:34:12 2016] dim(BBT): 200 x 200
+[Thu Jun 30 13:34:12 2016] dim(Et): 200 x 200
+[Thu Jun 30 13:34:12 2016] PCA done
+[Thu Jun 30 13:34:12 2016] Writing 10 eigenvalues to file simvalsFlashQR.txt
+[Thu Jun 30 13:34:12 2016] Writing 10 eigenvectors to file simvalsFlashQR.txt
+[Thu Jun 30 13:34:13 2016] Writing 10 PCs to file pcs.txt
+[Thu Jun 30 13:34:14 2016] Writing 10 proportion variance explained to file pve.txt
+[Thu Jun 30 13:34:14 2016] Goodbye!

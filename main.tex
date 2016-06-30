@@ -302,12 +302,12 @@ For our synthetic dataset the time difference between the two methods is large. 
     \caption{Running time in seconds for 41505x81700 SNP matrix}
     \centering
     \begin{tabular}{lrr}
-                                   & FlashPCA & Julia Lanczos \\
-        Preprocessing              &   53     & 54            \\
-        Matrix multiplication      &  927     & .             \\
-        Subspace/Lanczos iteration & 1639     & 37            \\
-        Postprocessing             &   10     & 0             \\
-        Total                      & 2629     & 81
+                                   & FlashPCA QR & Julia Lanczos \\
+        Preprocessing              &   61        & 54            \\
+        Matrix multiplication      &  926        & .             \\
+        Subspace/Lanczos iteration & 1935        & 37            \\
+        Postprocessing             &   11        & 0             \\
+        Total                      & 2933        & 81
     \end{tabular}
 \end{table}
 
@@ -315,8 +315,8 @@ For our synthetic dataset the time difference between the two methods is large. 
     \centering
     \begin{subfigure}{0.75\textwidth}
         \begin{tikzpicture}
-            \begin{semilogyaxis}[width=10cm, height=5cm, xmin = 0, xmax = 149, ymin=10e-15, ymax=10e1]
-                \addplot[very thick] file {data/FlashPCAconv.txt};
+            \begin{semilogyaxis}[width=10cm, height=5cm, xmin = -1, xmax = 169, ymin=10e-15, ymax=10e1]
+                \addplot[very thick] file {data/FlashPCAQRconv.txt};
             \end{semilogyaxis}
         \end{tikzpicture}
         \caption{FlashPCA}
