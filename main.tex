@@ -133,12 +133,8 @@ a separate preprocessing step~\cite{PLINK}. Any remaining related samples will
 result in (near) linear dependencies in the columns of the genomic matrix,
 leading to the presence of several singular values that are very small or zero.
 
-\paragraph{Linkage disequilibrium (LD)}
-LD occurs when mutations in genes are not independent across genome positions.
-The correct treatment of LD requires separate statistical modeling to simulate
-the dependencies introduced by the biological processes of gene
-recombinations~\cite{Li2003}.
-We therefore do not consider its treatment in the scope of our discussion.
+Principal components analysis (PCA) has been proposed as a way to uncover population structure of this form~\cite{Patterson2006}.
+
 
 \section{GWAS}
 Genome wide association studies (GWAS) seek to associate gene variation with variations in outcome variables typically measuring a quantity related to an illness. The typical measurement for the gene variation in the genotype at different locations in the genome. Not all locations in the genome have variation in the genotype across humans so a GWAS only includes locations with variation. Locations in the genome with variation are called single nucleotide polymorphisms (SNPs) and often the explanatory data in a GWAS is simply called SNP data. The various outcome variables in a GWAS are typically called phenotypes so in short GWASs examine the relation between genotypes and phenotypes. Often in statistical studies when data is observed passively there can be doubt about the causal direction for the variables included in the analysis. However, it is generally accepted that genotypes cannot be caused by other factors included in the analysis and consequently the correlation between genotypes and phenotype could in theory be considered causal.
@@ -515,7 +511,6 @@ with iid Gaussian entries of mean 0 and variance 1.
 
 \subsection{Spectra of genomics matrices}
 
-
 We hypothesize that the spectral properties of human patient genotype data can
 be modeled the Julia code in \ref{code:model}, which captures the confounding
 effects of population stratification and kinship. The former is modeled by
@@ -596,6 +591,15 @@ of approximately rank 10 (inset), and an asymptotic convergence to the same
 Marchenko-Pastur law (red dotted line).}
 \label{fig:scree}
 \end{figure}
+
+Random matrix theory was previously introduced in the theoretical analysis of
+principal components of genomics matrices. \cite{Patterson2006} proposed a
+hypothesis test that computed principal components should correspond to eigenvalues
+that were different from those expected from a pure random covariance matrix,
+and comparing in particular the largest eigenvalue against one randomly sampled
+from the Tracy-Widom distribution~\cite{Tracy1993,Tracy1994}.
+Here, we make the further observation that the bulk distribution must further satisfy the Marchenko-Pastur law~\cite{Marchenko1967}.
+
 
 \subsection{Accuracy and speed results}
 
