@@ -1,4 +1,4 @@
-\documentclass[review,leqno]{siamltex1213}
+\documentclass[review]{siamart0516}
 
 \usepackage{microtype}
 
@@ -24,10 +24,9 @@
 }
 \lstset{language=julia, numbers=left, numberstyle=\tiny, mathescape=true}
 
-\usepackage{todonotes}
 \usepackage{algorithm}
 \usepackage{algorithmic}
-\bibliographystyle{siam}
+\bibliographystyle{siamplain}
 
 \usepackage{pgfplots}
 \usepackage{subcaption}
@@ -60,6 +59,8 @@
 
 \maketitle
 
+\tableofcontents
+
 \begin{abstract}
 We describe the implementation of fast practical Lanczos algorithms employing
 thick restarting and partial reorthgonalization in Julia. We present a simple
@@ -84,8 +85,6 @@ software for principal component analysis of genomics matrices, such as FlashPCA
 \pagestyle{myheadings}
 \thispagestyle{plain}
 \markboth{J. CHEN, A. NOACK AND A. EDELMAN}{Principal components of genomics data in Julia}
-
-\listoftodos
 
 \section{Principal components of genomics data}
 
