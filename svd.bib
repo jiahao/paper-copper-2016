@@ -136,18 +136,6 @@ title = {Templates for the Solution of Algebraic Eigenvalue Problems: A Practica
 year = {2000}
 }
 
-@article{Hernandez2008,
-abstract = {Lanczos bidiagonalization is a competitive method for computing a partial singular value decompo- sition of a large sparse matrix, that is, when only a subset of the singular values and corresponding singular vectors are required. However, a straightforward implementation of the algorithm has the problem of loss of orthogonality between computed Lanczos vectors, and some reorthogonalization technique must be applied. Also, an effective restarting strategy must be used to prevent excessive growth of the cost of reorthogonalization per iteration. On the other hand, if the method is to be implemented on a distributed-memory parallel computer, then additional precau- tions are required so that parallel efficiency is maintained as the number of processors increases. In this paper, we present a Lanczos bidiagonalization procedure implemented in SLEPc, a software library for the solution of large, sparse eigenvalue problems on parallel computers. The solver is numerically robust and scales well up to hundreds of processors.},
-author = {Hern{\'{a}}ndez, Vicente and Rom{\'{a}}n, Jos{\'{e}} E and Tom{\'{a}}s, Andr{\'{e}}s},
-journal = {Electronic Transactions on Numerical Analysis},
-keywords = {SLEPc},
-pages = {68--85},
-title = {A Robust and Efficient Parallel {SVD} Solver based on Restarted {Lanczos} Bidiagonalization},
-url = {http://etna.mcs.kent.edu/volumes/2001-2010/vol31/abstract.php?vol=31{\&}pages=68-85},
-volume = {31},
-year = {2008}
-}
-
 @book{Stewart2001,
 address = {Philadelphia, PA},
 author = {Stewart, G W},
@@ -194,5 +182,30 @@ pages = {602--616},
 title = {Thick-Restart {Lanczos} Method for Large Symmetric Eigenvalue Problems},
 volume = {22},
 year = {2000}
+}
+
+@article{Baker2009,
+abstract = {Anasazi is a package within the Trilinos software project that provides a framework for the iterative, numerical solution of large-scale eigenvalue problems. Anasazi is written in ANSI C++ and exploits modern software paradigms to enable the research and development of eigensolver methods. The purpose of our article is to describe the design and development of the Anasazi framework. A performance comparison of Anasazi and the popular FORTRAN 77 code ARPACK is given.},
+author = {Baker, C. G. and Hetmaniuk, U. L. and Lehoucq, R. B. and Thornquist, H. K.},
+doi = {10.1145/1527286.1527287},
+journal = {ACM Transactions on Mathematical Software},
+number = {3},
+pages = {13},
+title = {Anasazi software for the numerical solution of large-scale eigenvalue problems},
+volume = {36},
+year = {2009}
+}
+
+@article{Lehoucq1996,
+abstract = {A deflation procedure is introduced that is designed to improve the convergence of an implicitly restarted Arnoldi iteration for computing a few eigenvalues of a large matrix. As the iteration progresses, the Ritz value approximations of the eigenvalues converge at different rates. A numerically stable scheme is introduced that implicitly deflates the converged approximations from the iteration. We present two forms of implicit deflation. The first, a locking operation, decouples converged Ritz values and associated vectors from the active part of the iteration. The second, a purging operation, removes unwanted but converged Ritz pairs. Convergence of the iteration is improved and a reduction in computational effort is also achieved. The deflation strategies make it possible to compute multiple or clustered eigenvalues with a single vector restart method. A block method is not required. These schemes are analyzed with respect to numerical stability, and computational results are presented.},
+author = {Lehoucq, R. B. and Sorensen, D. C.},
+doi = {10.1137/S0895479895281484},
+journal = {SIAM Journal on Matrix Analysis and Applications},
+month = oct,
+number = {4},
+pages = {789--821},
+title = {Deflation Techniques for an Implicitly Restarted {Arnoldi} Iteration},
+volume = {17},
+year = {1996}
 }
 

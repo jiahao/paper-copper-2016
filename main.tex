@@ -304,21 +304,32 @@ The software stack for GWAS is generally based on command line tools written com
 
 Two major packages exist for computing the PCA in the GWAS software stack. The package \emph{EIGENSOFT} accompanied~\cite{Patterson2006} which popularized the use of PCA in GWAS. In the original version of the package, the routine \texttt{smartpca} for computing the PCA of a SNP matrix was based on an eigenvalue solver from LAPACK. In consequence, all the eigenvalues and vectors of the SNP matrix were computed even though only a few of them were used as principal components. Computing the full decomposition is inefficient and as the number of available samples has grown over the year, this approach has become impractical.
 
-More recently, \emph{FlashPCA}~\cite{abraham2014fast}, has emerged as a potentially faster alternative to EIGENSOFT's \texttt{smartpca}. The PCA routine is based on a truncated SVD algorithm described in~\cite{halko2011finding}. More specifically, FlashPCA uses a subspace iteration scheme with either columnwise scaling (FlashPCA 1) or orthogonalization by QR (FlashPCA 2) in each iteration. The convergence criterion is based on the average of squared elementwise distance between the the bases for iteration $i-1$ and $i$. The QR orthogonalization step in the implementation of FlashPCA routine deviates from the algorithm in described~\cite{abraham2014fast} which only normalizes columnwise. Our conjecture was that this change was made to avoid loss of orthogonality in the subspace basis and the author of the package has confirmed this. In consequence, the timings in~\cite{abraham2014fast} do not correspond to the performance of the software run with default settings since the QR orthogonalization is much slower than the columnwise normalization. Furthermore, a degenerate basis might also converge much faster because it eventually converges to the single largest eigenvalue.
+More recently, \emph{FlashPCA}~\cite{abraham2014fast} has emerged as a potentially faster alternative to EIGENSOFT's \texttt{smartpca}. The PCA routine is based on a truncated SVD algorithm described in~\cite{halko2011finding}. More specifically, FlashPCA uses a subspace iteration scheme with either columnwise scaling (FlashPCA 1) or orthogonalization by QR (FlashPCA 2) in each iteration. The convergence criterion is based on the average of squared elementwise distance between the the bases for iteration $i-1$ and $i$. The QR orthogonalization step in the implementation of FlashPCA routine deviates from the algorithm in described~\cite{abraham2014fast} which only normalizes columnwise. Our conjecture was that this change was made to avoid loss of orthogonality in the subspace basis and the author of the package has confirmed this. In consequence, the timings in~\cite{abraham2014fast} do not correspond to the performance of the software run with default settings since the QR orthogonalization is much slower than the columnwise normalization. Furthermore, a degenerate basis might also converge much faster because it eventually converges to the single largest eigenvalue.
 
-For people trained in numerical methods, it is surprising that well established packages such as ARPACK and PROPACK are not used much in genomics. In particular since both ARPACK and PROPACK have convenient wrapper libraries in both R, Python, and MATLAB. This might be explained by the pronounced use of C/C++, where calling ARPACK and PROPACK are relatively more demanding, combined with the fact that iterative methods are traditionally not part of the curriculum in biology, medicine, or statistics.
+Table~\ref{tab:sw} lists some software packages providing eigenvalue or singular
+value computations useful for PCA. It may surprise readers that well-established
+packages in numerical linear algebra are rarely used in genomics, considering
+that libraries like ARPACK and PROPACK have convenient wrapper libraries in both
+R, Python, and MATLAB. This phenomenon might be explained by the pronounced use
+of C/C++ in statistical genetic, where calling ARPACK and PROPACK are relatively
+more demanding, combined with the fact that iterative methods are traditionally
+not part of the curriculum in statistical genomics.
 
 \begin{table}
     \centering
-    \caption{Software comparison}
-    \begin{tabular}{|c|c|c|}
-\hline
-        Software         & Algorithm                              & Used in genomics \\ \hline
-        EIGENSOFT/LAPACK & Householder bidiagonalization          & \cmark \\ \hline
-        FlashPCA         & Subspace iteration                     & \cmark \\ \hline
-        ARPACK           & Lanczos tridiagonalization on $X^TX$   & \xmark \\ \hline
-        PROPACK          & Lanczos bidiagonalization              & \xmark \\ \hline
-        SLEPc            & Lanczos bidiagonalization              & \xmark \\ \hline
+    \caption{List of software used for principal components analysis by genomics
+    scientists and numerical linear algebraists. $^*$: available in EIGENSOFT~\cite{Patterson2006}.
+    \label{tab:sw}}
+    \begin{tabular}{|c|c|c|c|}
+       \hline
+        Software         & Reference & Algorithm                              & Used in genomics \\ \hline
+        smartpca$^*$ & \cite{Patterson2006} & Householder bidiagonalization (LAPACK) & \cmark \\ \hline
+        FastPCA$^*$ & \cite{Galinsky2016} & Subspace iteration        & \cmark \\ \hline
+        FlashPCA         & \cite{abraham2014fast} & Subspace iteration      & \cmark \\ \hline
+        ARPACK           & \cite{Lehoucq1996} & Lanczos tridiagonalization  & \xmark \\ \hline
+        PROPACK          & \cite{Larsen1998} & Lanczos bidiagonalization    & \xmark \\ \hline
+        SLEPc            & \cite{Hernandez2008} & Lanczos bidiagonalization & \xmark \\ \hline
+        Anasazi          & \cite{Baker2009} & Lanczos bidiagonalization     & \xmark \\ \hline
     \end{tabular}
 \end{table}
 
