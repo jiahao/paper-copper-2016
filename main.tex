@@ -33,10 +33,9 @@
 \usepackage{pgfplots}
 \usepackage{subcaption}
 
-\title{Practical Lanczos bidiagonalizations in Julia
+\title{Fast computation of the principal components of genomics data in Julia
     \thanks{This
-        work was supported by the
-	%\todo{ALAN to supply}
+        work was supported by the Intel Science and Technology Center for Big Data.
 	}}
 
 \author{%
@@ -50,6 +49,11 @@
     \thanks{Computer Science and Artificial Intelligence Laboratory,
             Massachusetts Institute of Technology,
             Cambridge, Massachusetts, 02139 ({\tt noack@mit.edu})}
+    \and
+    Alan Edelman
+    \thanks{Department of Mathematics and Computer Science and Artificial Intelligence Laboratory,
+            Massachusetts Institute of Technology,
+            Cambridge, Massachusetts, 02139 ({\tt edelman@mit.edu})}
 }
 
 
@@ -58,18 +62,29 @@
 \maketitle
 
 \begin{abstract}
-We describe the implementation of a practical Krylov-Schur
+We describe the implementation of fast practical Lanczos algorithms employing
+thick restarting and partial reorthgonalization in Julia. We present a simple
+model for matrices that encode genomics data in genome-wide association studies
+(GWAS), and demonstrate that Lanczos methods outperform conventionally used
+software for principal component analysis of genomics matrices, such as FlashPCA.
 \end{abstract}
 
 \begin{keywords}
+    singular value decomposition,
+    principal components analysis,
+    genome-wide association studies,
+    statistical genetics,
+    Lanczos bidiagonalization,
+    Julia programming language
 \end{keywords}
 
 \begin{AMS}
+    65F15, 97N80
 \end{AMS}
 
 \pagestyle{myheadings}
 \thispagestyle{plain}
-\markboth{J. CHEN AND A. NOACK}{Practical SVD in Julia}
+\markboth{J. CHEN, A. NOACK AND A. EDELMAN}{Principal components of genomics data in Julia}
 
 \listoftodos
 
