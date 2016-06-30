@@ -424,14 +424,10 @@ end
 annd the other on \verb|Bidiagonal| matrices. berbidiaogonal thus we
 sw
 
-
-
 \paragraph{Special factorization types.}
 Low cost abstractions
 
-
 \section{Practical considerations}
-
 
 \subsection{Partial reorthogonalization}
 
@@ -451,45 +447,6 @@ We also implement the thick restart methodo
 \todo{Jiahao: Derive correct residual}
 
 
-\section{``Applications of overloading''}
-
-\subsection{Generalization to Block Lanczos}
-
-\todo{Andreas}
-
-\subsection{Generalization to quaternions and BigFloats}
-
-\todo{Andreas}
-
-\subsection{Distributed linear algebra}
-
-\paragraph{Overloading 5 functions gets you ScaLAPACK/Elemental integration.}
-
-\todo{Andreas and Jake}
-
-
-
-\section{Results}
-
-Pick some specific examples
-
-Pick some convenient Matrix Market matrix which produces some acceleration of
-the problem by monitoring the error bounds on individual matrices vs the entire
-residual norm.
-
-\missingfigure{Convergence as a function of error bars on singular values vs residuals}
-
-\todo{Jake}
-
-
-\subsection{Serial linear algebra}
-
-\missingfigure{Execution time of Julia vs ARPACK vs PROPACK vs SLEPc on one core}
-
-
-\todo{Andreas and Jake and Jiahao}
-
-
 \subsection{Comparison with randomized algorithms}
 
 Comparison with flashpca or randomized subspace interaction?
@@ -498,19 +455,6 @@ Show error bound computations.
 
 \todo{Jiahao}
 
-
-
-
-\subsection{Distributed linear algebra}
-
-\missingfigure{Strong scaling for parallel linalg on some problem}
-
-\missingfigure{Weak scaling for parallel linalg on some problem}
-
-Julia/ScaLAPACK vs Julia/Elemental vs Julia/MKL vs SLEPc vs PARPACK vs Parallel PROPACK (?)
-
-
-\todo{Andreas and Jake}
 
 
 \section{Results on genomics data matrix}
