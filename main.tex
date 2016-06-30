@@ -1,4 +1,4 @@
-\documentclass[final,leqno]{siamltex1213}
+\documentclass[review,leqno]{siamltex1213}
 
 \usepackage{microtype}
 
@@ -295,169 +295,11 @@ Two major packages exist for computing the PCA in the GWAS software stack. The p
 More recently, \emph{FlashPCA}~\cite{abraham2014fast}, has emerged as a potentially faster alternative to EIGENSOFT's \texttt{smartpca}. The PCA routine is based on a truncated SVD algorithm described in~\cite{halko2011finding}. More specifically, FlashPCA uses a subspace iteration scheme with orthogonalization by QR in each iteration. The convergence criterion is based on the Frobenius norm of the changes to the orthogonal basis. The QR orthogonalization step in the implementation of FlashPCA routine deviates from the algorithm in described~\cite{abraham2014fast} which only normalizes columnwise. Our conjecture was that this change was made to avoid loss of orthogonality in the subspace basis and the author of the package has confirmed this to us. In consequence, the timings in~\cite{abraham2014fast} do not correspond to the performance of the software run with default settings since the QR orthogonalization is much slower than the columnwise normalization. Furthermore, a degenerate basis might also converge much faster because it eventually just converges to the single largest eigenvalue.
 
 
-\subsection{Comparing TSVD and FlashPCA}
-For our synthetic dataset the time difference between the two methods is large. The initial preprocessing steps where the matrix is read and scaled contribute very little to any of the methods. For FlashPCA, the running time consists of two major components which is an initial matrix multiply, $XX'$, and the subsequent subspace iterations. By tracking the convergence criterion at each iteration it is clear that the convergence is very slow.
 
-\begin{table}
-    \caption{Running time in seconds for 41505x81700 SNP matrix}
-    \centering
-    \begin{tabular}{lrr}
-                                   & FlashPCA QR & Julia Lanczos \\
-        Preprocessing              &   61        & 54            \\
-        Matrix multiplication      &  926        & .             \\
-        Subspace/Lanczos iteration & 1935        & 37            \\
-        Postprocessing             &   11        & 0             \\
-        Total                      & 2933        & 81
-    \end{tabular}
-\end{table}
+\section{A simple model for genomics data}
 
-\begin{figure}
-    \centering
-    \begin{subfigure}{0.75\textwidth}
-        \begin{tikzpicture}
-            \begin{semilogyaxis}[width=10cm, height=5cm, xmin = -1, xmax = 169, ymin=10e-15, ymax=10e1]
-                \addplot[very thick] file {data/FlashPCAQRconv.txt};
-            \end{semilogyaxis}
-        \end{tikzpicture}
-        \caption{FlashPCA}
-    \end{subfigure}
-    \begin{subfigure}{0.2\textwidth}
-        \begin{tikzpicture}
-            \begin{semilogyaxis}[width=3cm, height=5cm, ymin=10e-15, ymax=10e1]
-                \addplot[very thick] file {data/JuliaPCAconv.txt};
-            \end{semilogyaxis}
-        \end{tikzpicture}
-        \caption{Julia-Lanczos}
-    \end{subfigure}
-    \caption{Convergence}
-\end{figure}
-
-Of particular interest in the use of low rank approximations for SVDS.
-In this case it is not necessary to compute $U$, $S$ and $V$ and
-their entirety; rather, it suffices to determine the first $k$ diagonal
-entries of $S$, being the $k$ largest singular values, and their
-corresponding columns of $U$ and $V$.
-
-The Lanczos bidiagonalization~\cite{Golub1965} is a natural choice.
-
-This paper describes an implementation of the Lanczos bidiagonalization
-method written in pure Julia.
-
-\section{Implementing simple bidiagonalization in Julia}
-
-\begin{algorithm}
-\caption{Simple Golub-Kahan-Lanczos bidiagonalization in pseudocode}
-
-\begin{algorithmic}
-\REQUIRE A matrix $A$ and a unit vector $q$
-\STATE $\beta_0$ = 0
-\FOR{$j=1,2,\dots,k$}
-
-\STATE $\tilde{p}_j = A q_j - \beta_{j-1} p_{j-1}$
-\STATE $\alpha_j = \left\Vert \tilde{p}_j \right\Vert_2$
-\STATE $p_j = \tilde{p}_j / \alpha_j$
-
-\STATE $\tilde{q}_{j+1} = A^\prime p_j - \alpha_j q_j$
-\STATE $\beta_j = \left\Vert \tilde{q}_{j+1} \right\Vert_2$
-\STATE $q_{j+1} = \tilde{q}_{j+1} / \beta_j$
-
-\ENDFOR
-\RETURN $\left(p_1, \dots, p_k, q_1, \dots, q_{k+1},\right) \alpha_1, \dots, \alpha_{k+1}, \beta_1, \dots, \beta_{k+1}$
-\end{algorithmic}
-\end{algorithm}
-
-
-\section{Practical Lanczos bidiagonalization methods in Julia}
-
-Julia is a high level dynamic language for technical
-computing~\cite{Bezanson2012,Bezanson2015}. While it shares superficial
-syntactic similarities with other high level languages such as Matlab or
-Python, Julia was designed specifically for technical computing for the ground
-up, with a syntax that supports the expressiveness demanded by mathematical
-notation while facilitating compiler optimizations to generate fast machine
-code.
-
-
-Here is the high level structure in Julia
-
-\begin{algorithm}
-\caption{Simple Golub-Kahan-Lanczos bidiagonalization in Julia}
-
-\begin{lstlisting}
-function svd_gkl(A, q; maxiter=minimum(size(A)))
-    m, n = size(A)
-    T = eltype(A)
-    Tr = typeof(one(T)/norm([one(T)]))
-
-    $α$s = Tr[]
-    $β$s = Tr[]
-    P = zeros(T, m, 0)
-    Q = [q]
-
-    $β$ = zero(Tr)
-    p = zeros(size(A, 1))
-    for iter in 1:maxiter
-        p = A*q - $β$*p
-	$α$ = norm(p)
-        p = p/$α$
-        push!($α$s, α)
-        P = [P p]
-
-        q = A'p - $α$*q
-        $β$ = norm(q)
-        q = q/$β$
-        push!($β$s, β)
-        Q = [Q q]
-    end
-
-    B = Bidiagonal($α$s, $β$s[1:maxiter-1], true)
-    F = svdfact(B)
-    LinAlg.SVD(P'F[:U], F[:S], F[:Vt]*Q[:,1:maxiter]')
-end
-\end{lstlisting}
-\end{algorithm}
-
-
-We also implement the thick restart method for Lanczos bidiagonalization, as described in \cite{Baglama2005}.
-
-\missingfigure{Code listing for thick restart}
-
-\todo{Jiahao}
-
-
-
-\section{Convergence analysis of FlashPCA}
-
-Software like FlashPCA make use of randomized subspace interactions, which are
-essentially equivalent to subspace iteration with a randomized starting subspace.
-
-FlashPCA uses an unconventional convergence criterion, namely the matrix norm
-of the difference between successive subspace basis vectors,
-$\Vert Y_n - Y_{n-1} \Vert$.
-
-By contrast, the standard measures of convergence using the residual norm yield
-a simple error estimate for the uncertainty in a computed eigenvalues.
-
-\cite[Theorem 4.5.1]{Parlett1998} states, in slightly altered notation, that for
-any scalar $\theta$ and vector $v$, there is an eigenvalue $\lambda$ of $Y$ satisfying
-\[
-\vert\lambda - \theta\vert \le \Vert Y v - v \theta \Vert
-\]
-
-Notably, this result does not require that $(\theta, v)$ be a Ritz pair or have
-any variational structure whatsoever. Therefore, we can use
-
-\[
-\Delta \sigma_i = \sqrt{\Vert X X^T v_i - v_i \theta_i \Vert}
-\]
-
-as an error bar for using $\sqrt{\theta_i}$ as an estimate for a singular value,
-where $(\theta_i, v_i)$ is some eigenpair of $Q^T X X^T Q$ computed at any
-iteration of FlashPCA.
-
-
-\section{Results on genomics data matrix}
-
+In this section we present a very simple random model which accurately mimics
+the spectral features observed in real data matrices.
 
 \subsection{The Marchenko-Pastur law}
 
@@ -603,6 +445,165 @@ from the Tracy-Widom distribution~\cite{Tracy1993,Tracy1994}.
 Here, we make the further observation that the bulk distribution must further satisfy the Marchenko-Pastur law~\cite{Marchenko1967}.
 
 
+\section{Algorithms for PCA}
+
+Of particular interest in the use of low rank approximations for SVDS.
+In this case it is not necessary to compute $U$, $S$ and $V$ and
+their entirety; rather, it suffices to determine the first $k$ diagonal
+entries of $S$, being the $k$ largest singular values, and their
+corresponding columns of $U$ and $V$.
+
+The Lanczos bidiagonalization~\cite{Golub1965} is a natural choice.
+
+\subsection{Implementing simple bidiagonalization in Julia}
+
+\begin{algorithm}
+\caption{Simple Golub-Kahan-Lanczos bidiagonalization in pseudocode}
+
+\begin{algorithmic}
+\REQUIRE A matrix $A$ and a unit vector $q$
+\STATE $\beta_0$ = 0
+\FOR{$j=1,2,\dots,k$}
+
+\STATE $\tilde{p}_j = A q_j - \beta_{j-1} p_{j-1}$
+\STATE $\alpha_j = \left\Vert \tilde{p}_j \right\Vert_2$
+\STATE $p_j = \tilde{p}_j / \alpha_j$
+
+\STATE $\tilde{q}_{j+1} = A^\prime p_j - \alpha_j q_j$
+\STATE $\beta_j = \left\Vert \tilde{q}_{j+1} \right\Vert_2$
+\STATE $q_{j+1} = \tilde{q}_{j+1} / \beta_j$
+
+\ENDFOR
+\RETURN $\left(p_1, \dots, p_k, q_1, \dots, q_{k+1},\right) \alpha_1, \dots, \alpha_{k+1}, \beta_1, \dots, \beta_{k+1}$
+\end{algorithmic}
+\end{algorithm}
+
+
+\subsection{Practical Lanczos bidiagonalization methods in Julia}
+
+Julia is a high level dynamic language for technical
+computing~\cite{Bezanson2012,Bezanson2015}. While it shares superficial
+syntactic similarities with other high level languages such as Matlab or
+Python, Julia was designed specifically for technical computing for the ground
+up, with a syntax that supports the expressiveness demanded by mathematical
+notation while facilitating compiler optimizations to generate fast machine
+code.
+
+
+Here is the high level structure in Julia
+
+\begin{algorithm}
+\caption{Simple Golub-Kahan-Lanczos bidiagonalization in Julia}
+
+\begin{lstlisting}
+function svd_gkl(A, q; maxiter=minimum(size(A)))
+    m, n = size(A)
+    T = eltype(A)
+    Tr = typeof(one(T)/norm([one(T)]))
+
+    $α$s = Tr[]
+    $β$s = Tr[]
+    P = zeros(T, m, 0)
+    Q = [q]
+
+    $β$ = zero(Tr)
+    p = zeros(size(A, 1))
+    for iter in 1:maxiter
+        p = A*q - $β$*p
+	$α$ = norm(p)
+        p = p/$α$
+        push!($α$s, α)
+        P = [P p]
+
+        q = A'p - $α$*q
+        $β$ = norm(q)
+        q = q/$β$
+        push!($β$s, β)
+        Q = [Q q]
+    end
+
+    B = Bidiagonal($α$s, $β$s[1:maxiter-1], true)
+    F = svdfact(B)
+    LinAlg.SVD(P'F[:U], F[:S], F[:Vt]*Q[:,1:maxiter]')
+end
+\end{lstlisting}
+\end{algorithm}
+
+
+We also implement the thick restart method for Lanczos bidiagonalization, as described in \cite{Baglama2005}.
+
+
+\subsection{Convergence analysis of FlashPCA}
+
+Software like FlashPCA make use of randomized subspace interactions, which are
+essentially equivalent to subspace iteration with a randomized starting subspace.
+
+FlashPCA uses an unconventional convergence criterion, namely the matrix norm
+of the difference between successive subspace basis vectors,
+$\Vert Y_n - Y_{n-1} \Vert$.
+
+By contrast, the standard measures of convergence using the residual norm yield
+a simple error estimate for the uncertainty in a computed eigenvalues.
+
+\cite[Theorem 4.5.1]{Parlett1998} states, in slightly altered notation, that for
+any scalar $\theta$ and vector $v$, there is an eigenvalue $\lambda$ of $Y$ satisfying
+\[
+\vert\lambda - \theta\vert \le \Vert Y v - v \theta \Vert
+\]
+
+Notably, this result does not require that $(\theta, v)$ be a Ritz pair or have
+any variational structure whatsoever. Therefore, we can use
+
+\[
+\Delta \sigma_i = \sqrt{\Vert X X^T v_i - v_i \theta_i \Vert}
+\]
+
+as an error bar for using $\sqrt{\theta_i}$ as an estimate for a singular value,
+where $(\theta_i, v_i)$ is some eigenpair of $Q^T X X^T Q$ computed at any
+iteration of FlashPCA.
+
+
+
+\section{Speed and accuracy results on synthetic genomics data}
+
+\subsection{Comparing TSVD and FlashPCA}
+For our synthetic dataset the time difference between the two methods is large. The initial preprocessing steps where the matrix is read and scaled contribute very little to any of the methods. For FlashPCA, the running time consists of two major components which is an initial matrix multiply, $XX'$, and the subsequent subspace iterations. By tracking the convergence criterion at each iteration it is clear that the convergence is very slow.
+
+\begin{table}
+    \caption{Running time in seconds for 41505x81700 SNP matrix}
+    \centering
+    \begin{tabular}{lrr}
+                                   & FlashPCA QR & Julia Lanczos \\
+        Preprocessing              &   61        & 54            \\
+        Matrix multiplication      &  926        & .             \\
+        Subspace/Lanczos iteration & 1935        & 37            \\
+        Postprocessing             &   11        & 0             \\
+        Total                      & 2933        & 81
+    \end{tabular}
+\end{table}
+
+\begin{figure}
+    \centering
+    \begin{subfigure}{0.75\textwidth}
+        \begin{tikzpicture}
+            \begin{semilogyaxis}[width=10cm, height=5cm, xmin = -1, xmax = 169, ymin=10e-15, ymax=10e1]
+                \addplot[very thick] file {data/FlashPCAQRconv.txt};
+            \end{semilogyaxis}
+        \end{tikzpicture}
+        \caption{FlashPCA}
+    \end{subfigure}
+    \begin{subfigure}{0.2\textwidth}
+        \begin{tikzpicture}
+            \begin{semilogyaxis}[width=3cm, height=5cm, ymin=10e-15, ymax=10e1]
+                \addplot[very thick] file {data/JuliaPCAconv.txt};
+            \end{semilogyaxis}
+        \end{tikzpicture}
+        \caption{Julia-Lanczos}
+    \end{subfigure}
+    \caption{Convergence}
+\end{figure}
+
+
 \subsection{Accuracy and speed results}
 
 \begin{table}
@@ -660,6 +661,10 @@ data matrices. The implementation of these methods in the Julia programming
 language provides a fast, practical software tool that allows for easy
 introspection into the inner workings of the Lanczos algorithms.
 
+Further work remains to be done to provide the ability to do both partial
+reorthogonalization and thick restart in Julia, as well well as providing
+block Lanczos.
+
 \section*{Acknowledgments}
 
 We thank the Julia development community for their contributions to free and
@@ -667,8 +672,8 @@ open source software. Julia is free software that can be downloaded from
 \url{julialang.org/downloads}. The implementation of iterative SVD described in
 this paper is available as the \verb|svdl| function in the
 \href{IterativeSolvers.jl}{https://github.com/JuliaLang/IterativeSolvers.jl}
-package. J.C. would also like to thank Jack Poulson (Stanford), David Silvester
-(Manchester), and Alex Townsend (MIT) for many insightful discussions.
+package. J.C. would also like to thank Jack Poulson (Stanford) and David Silvester
+(Manchester) for many insightful discussions.
 
 \bibliography{bio,svd}
 
