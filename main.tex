@@ -217,7 +217,7 @@ $\beta$ can be written as
 %
 \begin{equation}
 \label{eq:ols}
-    \hat{\beta} = (X'X)^{-1}X'y.
+    \hat{\beta} = (X^TX)^{-1}X^Ty.
 \end{equation}
 
 The conditional probability treatment demonstrates that when $(x_i,y_i)$ pairs
@@ -227,29 +227,29 @@ squares solution.
 First, notice that the least squares estimator \eqref{eq:ols} can be written
 %
 \begin{equation*}
-    \hat{\beta} = \beta + (X'X)^{-1}X'\varepsilon
+    \hat{\beta} = \beta + (X^TX)^{-1}X^T\varepsilon
 \end{equation*}
 %
 and the expected value of the estimator is
 %
 \begin{equation}
-    \E(\hat{\beta}|X) = \E(\beta + (X'X)^{-1}X'\varepsilon|X) =
-        \beta + (X'X)^{-1}X'\E(\varepsilon|X) = \beta
+    \E(\hat{\beta}|X) = \E(\beta + (X^TX)^{-1}X^T\varepsilon|X) =
+        \beta + (X^TX)^{-1}X^T\E(\varepsilon|X) = \beta
 \end{equation}
 %
 which means that the estimator is \emph{unbiased}. Statisticians are interested in the variability of $\hat{\beta}$ under changes to the data that could be considered small errors. The most common measurement for the variability of an estimator is the (conditional) variance, i.e.
 %
 \begin{equation*}
-    \Var(\hat{\beta}|X) = \Var(\beta + (X'X)^{-1}X'\varepsilon|X) =
-        (X'X)^{-1}X'\Var(\varepsilon|X)X(X'X)^{-1}.
+    \Var(\hat{\beta}|X) = \Var(\beta + (X^TX)^{-1}X^T\varepsilon|X) =
+        (X^TX)^{-1}X^T\Var(\varepsilon|X)X(X^TX)^{-1}.
 \end{equation*}
 
-This shows that variance of $\hat{\beta}$ depends on the (conditional) variance of $\varepsilon$, which has not been discussed yet. In classical treatments of the linear regression model it is typically assumed that, conditionally on $x_i$, the $y_i$s are independent and the have the same variance which is the same as $\Var(\varepsilon|X)=\sigma^2 I$ for some unknown scalar $\sigma^2$. Under this assumption, the variance of $\hat{\beta}$ reduces to $\sigma^2 (X'X)^{-1}$. The magnitude of this quantity is unknown because $\sigma^2$ is an unknown parameter but $\sigma^2$ can be \emph{estimated} from the data. The usual estimator is
+This shows that variance of $\hat{\beta}$ depends on the (conditional) variance of $\varepsilon$, which has not been discussed yet. In classical treatments of the linear regression model it is typically assumed that, conditionally on $x_i$, the $y_i$s are independent and the have the same variance which is the same as $\Var(\varepsilon|X)=\sigma^2 I$ for some unknown scalar $\sigma^2$. Under this assumption, the variance of $\hat{\beta}$ reduces to $\sigma^2 (X^TX)^{-1}$. The magnitude of this quantity is unknown because $\sigma^2$ is an unknown parameter but $\sigma^2$ can be \emph{estimated} from the data. The usual estimator is
 $\hat{\sigma}^2=\frac{1}{n} \|\hat{\varepsilon}\|^2$
 where $\hat{\varepsilon} = y - X\hat{\beta}$.
-This leads to the estimate of the (conditional) variance of the estimator $\widehat{\Var(\hat{\beta}|X)} = \hat{\sigma}^2(X'X)^{-1}$.
+This leads to the estimate of the (conditional) variance of the estimator $\widehat{\Var(\hat{\beta}|X)} = \hat{\sigma}^2(X^TX)^{-1}$.
 
-The independence assumption is often used in statistics and can be justified from an assumption of random sampling with replacement. In studies where data is passively collected, this might not be a reasonable assumption as explained in the previous section. Non-random sampling might lead to correlation between the phenotypes even after conditioning on the genotypes. In consequence of that, $\Var(\varepsilon|X)$ will no longer be diagonal but have some general positive definite structure $\Sigma$ and $\Var(\hat{\beta}|X)=(X'X)^{-1}X'\Sigma X(X'X)^{-1}$. Since $\Sigma$ in general is consists of $\frac{n(n+1)}{2}$ parameters it cannot be estimated consistently.
+The independence assumption is often used in statistics and can be justified from an assumption of random sampling with replacement. In studies where data is passively collected, this might not be a reasonable assumption as explained in the previous section. Non-random sampling might lead to correlation between the phenotypes even after conditioning on the genotypes. In consequence of that, $\Var(\varepsilon|X)$ will no longer be diagonal but have some general positive definite structure $\Sigma$ and $\Var(\hat{\beta}|X)=(X^TX)^{-1}X^T\Sigma X(X^TX)^{-1}$. Since $\Sigma$ in general is consists of $\frac{n(n+1)}{2}$ parameters it cannot be estimated consistently.
 
 In order to analyze the problem with correlated observations, it is convenient to decompose the error into a part that contains the cross-individual correlation and a part that is diagonal and therefore only describes the variance for each individual. This may be written as
 
@@ -266,24 +266,24 @@ A possible solution to the problem of producing a reliable estimate of the varia
 \begin{equation*}
     \hat{\theta} = \begin{pmatrix}\hat{\beta} \\ \hat{\gamma}\end{pmatrix} =
     \begin{pmatrix}
-        X'X & X'Z \\ Z'X & Z'Z
+        X^TX & X^TZ \\ Z^TX & Z^TZ
     \end{pmatrix}^{-1}
     \begin{pmatrix}
-        X' \\ Z'
+        X^T \\ Z^T
     \end{pmatrix}
     (X\beta + Z\gamma + \xi)=
     \theta +
             \begin{pmatrix}
-        X'X & X'Z \\ Z'X & Z'Z
+        X^TX & X^TZ \\ Z^TX & Z^TZ
     \end{pmatrix}^{-1}
     \begin{pmatrix}
-        X' \\ Z'
+        X^T \\ Z^T
     \end{pmatrix}\xi.
 \end{equation*}
 which has variance
 \begin{equation*}
     \Var(\hat{\theta}|X,Z)=\sigma_\xi^2
-        \begin{pmatrix} X'X & X'Z \\ Z'X & Z'Z \end{pmatrix}^{-1}
+        \begin{pmatrix} X^TX & X^TZ \\ Z^TX & Z^TZ \end{pmatrix}^{-1}
 \end{equation*}.
 
 In many applications, a few pricipal components of the covariance matrix of the complete SNP dataset is used as a proxy for the correlation between individuals. Computing principal components is therefore often a first step in a GWAS. In the following section we give a brief overview over the available software for computing the principal component of SNP datasets.
@@ -304,7 +304,7 @@ More recently, \emph{FlashPCA}~\cite{abraham2014fast}, has emerged as a potentia
         Software  & Algorithm                              & Used in genomics \\
         EIGENSOFT & Householder bidiagonalization (LAPACK) & \cmark \\
         FlashPCA  & Block power                            & \cmark \\
-        ARPACK    & Lanczos, $X'X$                         & \xmark \\
+        ARPACK    & Lanczos, $X^TX$                         & \xmark \\
         PROPACK   & Lanczos                                & \xmark
     \end{tabular}
 \end{table}
@@ -605,7 +605,7 @@ iteration of FlashPCA.
 \section{Speed and accuracy results on synthetic genomics data}
 
 \subsection{Comparing TSVD and FlashPCA}
-For our synthetic dataset the time difference between the two methods is large. The initial preprocessing steps where the matrix is read and scaled contribute very little to any of the methods. For FlashPCA, the running time consists of two major components which is an initial matrix multiply, $XX'$, and the subsequent subspace iterations. Forming the matrix $XX'$ is the default option in FlashPCA and might be a relict from the time when the number of gene positions (columns) was much larger the number of sample (rows). For and aspect ration of $\frac{1}{2}$ this computation is expensive. In addition to the pure flop expense in computing $XX'$, on our system, there is a large penalty for using Eigen relative to MKL where the former executes in 926 and the latter in 306 seconds for the same number of threads. In contrast to the algorithmic differences, this difference might be very system dependent.
+For our synthetic dataset the time difference between the two methods is large. The initial preprocessing steps where the matrix is read and scaled contribute very little to any of the methods. For FlashPCA, the running time consists of two major components which is an initial matrix multiply, $XX^T$, and the subsequent subspace iterations. Forming the matrix $XX^T$ is the default option in FlashPCA and might be a relict from the time when the number of gene positions (columns) was much larger the number of sample (rows). For an aspect ratio of $\frac{1}{2}$ this computation is expensive. In addition to the pure flop expense in computing $XX^T$, on our system, there is a large penalty for using Eigen relative to MKL where the former executes in 926 and the latter in 306 seconds for the same number of threads. In contrast to the algorithmic differences, this difference might be very system dependent.
 
 The largest component of the running time for FlashPCA is the subspace iterations. By tracking the convergence criterion at each iteration it is clear that the convergence is very slow. Figure~\ref{fig:conv} shows the convergence of the FlashPCA with QR orthogonalization and our TSVD algorithm.
 
