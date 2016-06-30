@@ -696,10 +696,10 @@ and relative error in the singular values of $10^{-8}$ for the Lanczos methods.
     \centering
     \begin{tikzpicture}
         \begin{semilogyaxis}[width=10cm, height=5cm]
-            \addplot[very thick] file {data/condNumberNorm.txt};
+            \addplot[very thick, mark=*] file {data/condNumberNorm.txt};
         \end{semilogyaxis}
     \end{tikzpicture}
-    \caption{Condition number of the matrix of subspace basis per iteration for FlashPCA without QR}
+    \caption{Condition number of the matrix of subspace basis per iteration for FlashPCA without QR. The condition number at iteration zero is the condition number of the normalized basis after the initial range computation.}
 \end{figure}
 
 \section{Conclusions}
