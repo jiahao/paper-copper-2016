@@ -277,19 +277,6 @@ For our synthetic dataset the time difference between the two methods is large. 
     \caption{Convergence}
 \end{figure}
 
-\section{Introduction}
-
-The singular value decomposition (SVD) of a $m\times n$ matrix is
-the product of matrices
-\[
-A=USV^{T}
-\]
-where $S$ is a diagonal real matrix, ...
-
-SVDs are popular for tint many contests itncluding the princiapal
-components anlayss bkah blah blaha dn it si salso known as the Kahunen-Loeve
-decompositoin in other conetxts.
-
 Of particular interest in the use of low rank approximations for SVDS.
 In this case it is not necessary to compute $U$, $S$ and $V$ and
 their entirety; rather, it suffices to determine the first $k$ diagonal
@@ -300,7 +287,6 @@ The Lanczos bidiagonalization~\cite{Golub1965} is a natural choice.
 
 This paper describes an implementation of the Lanczos bidiagonalization
 method written in pure Julia.
-
 
 \section{Implementing simple bidiagonalization in Julia}
 
