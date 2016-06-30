@@ -260,9 +260,10 @@ In order to analyze the problem with correlated observations, it is convenient t
 where is assumed that $\Var(\eta|X)=\Sigma_\eta$ and $\Var(\xi|X)=\sigma^2_\xi I$. Furthermore, it is assumes that the two error terms are independent.
 
 
+\label{sec:regress-correction}
 \subsubsection{Fixed effect estimation}
 
-A possible solution to the problem of producing a reliable estimate of the variance of $\hat{\beta}$ is to come up with a set of variables $z_1,\dots,z_k$ that proxies the correlation between the observations, i.e. $\eta=Z\gamma$. By simply including the variables $z_1,\dots,z_k$ in the regression model, it possible to remove the correlation which distorts the variance estimate for $\hat{\beta}$. For the regression $y|X,Z$, we get the least squares estimator
+One way to produce a reliable estimate of the variance of $\hat{\beta}$ is to come up with a set of variables $z_1,\dots,z_k$ that proxies the correlation between the observations, i.e.\ $\eta=Z\gamma$. By simply including the variables $z_1,\dots,z_k$ in the regression model, it possible to remove the correlation which distorts the variance estimate for $\hat{\beta}$. For the regression $y|X,Z$, we get the least squares estimator
 \begin{equation*}
     \hat{\theta} = \begin{pmatrix}\hat{\beta} \\ \hat{\gamma}\end{pmatrix} =
     \begin{pmatrix}
@@ -309,6 +310,7 @@ More recently, \emph{FlashPCA}~\cite{abraham2014fast}, has emerged as a potentia
     \end{tabular}
 \end{table}
 
+\label{sec:model}
 \section{A simple model for genomics data}
 
 In this section we present a very simple random model which accurately mimics
@@ -487,50 +489,31 @@ number of columns.
 
 \section{Algorithms for PCA}
 
-Of particular interest in the use of low rank approximations for SVDS.
-In this case it is not necessary to compute $U$, $S$ and $V$ and
-their entirety; rather, it suffices to determine the first $k$ diagonal
-entries of $S$, being the $k$ largest singular values, and their
-corresponding columns of $U$ and $V$.
+The discussion in Section~\ref{sec:model} demonstrates that the confounding
+effects of population substructure can and does produce a low rank structure in
+the top singular vectors, which can be captured even in the very crude random
+matrix model of Algorithm~\ref{code:model}. The top few principal components,
+which by construction capture the largest components of the variability, are
+good candidates for modeling the unwanted variation as described in
+Section~\ref{sec:regress-correction}. Iterative eigenvalue (or singular value)
+methods~\cite{Bai2000} are therefore computationally efficient choices for
+determining these principal components, as only a handful of them are needed.
 
-The Lanczos bidiagonalization~\cite{Golub1965} is a natural choice.
+The method implemented in FlashPCA~\cite{abraham2014fast} is randomized
+subspace iteration one of the randomized SVD algorithms described in
+\cite{halko2011finding}.
 
-\subsection{Implementing simple bidiagonalization in Julia}
-
-\begin{algorithm}
-\caption{Simple Golub-Kahan-Lanczos bidiagonalization in pseudocode}
-
-\begin{algorithmic}
-\REQUIRE A matrix $A$ and a unit vector $q$
-\STATE $\beta_0$ = 0
-\FOR{$j=1,2,\dots,k$}
-
-\STATE $\tilde{p}_j = A q_j - \beta_{j-1} p_{j-1}$
-\STATE $\alpha_j = \left\Vert \tilde{p}_j \right\Vert_2$
-\STATE $p_j = \tilde{p}_j / \alpha_j$
-
-\STATE $\tilde{q}_{j+1} = A^\prime p_j - \alpha_j q_j$
-\STATE $\beta_j = \left\Vert \tilde{q}_{j+1} \right\Vert_2$
-\STATE $q_{j+1} = \tilde{q}_{j+1} / \beta_j$
-
-\ENDFOR
-\RETURN $\left(p_1, \dots, p_k, q_1, \dots, q_{k+1},\right) \alpha_1, \dots, \alpha_{k+1}, \beta_1, \dots, \beta_{k+1}$
-\end{algorithmic}
-\end{algorithm}
-
-
-\subsection{Practical Lanczos bidiagonalization methods in Julia}
-
-Julia is a high level dynamic language for technical
-computing~\cite{Bezanson2012,Bezanson2015}. While it shares superficial
-syntactic similarities with other high level languages such as Matlab or
-Python, Julia was designed specifically for technical computing for the ground
-up, with a syntax that supports the expressiveness demanded by mathematical
+To our surprise, it does not appear that Lanczos-based bidiagonalization
+methods have been used to compute principal components of genomics matrices.
+We have therefore implemented Golub-Kahan-Lanczos bidiagonalization~\cite{Golub1965}
+method in pure Julia. To control the memory usage and accumulation of
+roundoff error, we also include an implementation of the thick restart
+strategy~\cite{Stewart2001,Baglama2005} and offer the choice of full and
+partial reorthogonalization~\cite{Simon1984,Larsen1998}.
+Julia is a high level dynamic language for technical computing~\cite{Bezanson2012,Bezanson2015}
+that provides a convenient expressive syntax close to mathematical
 notation while facilitating compiler optimizations to generate fast machine
 code.
-
-
-Here is the high level structure in Julia
 
 \begin{algorithm}
 \caption{Simple Golub-Kahan-Lanczos bidiagonalization in Julia}
@@ -568,9 +551,6 @@ function svd_gkl(A, q; maxiter=minimum(size(A)))
 end
 \end{lstlisting}
 \end{algorithm}
-
-
-We also implement the thick restart method for Lanczos bidiagonalization, as described in \cite{Baglama2005}.
 
 
 \subsection{Convergence analysis of FlashPCA}

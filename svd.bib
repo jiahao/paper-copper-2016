@@ -122,3 +122,77 @@ year = {1993}
   year={1967},
 }
 
+@book{Bai2000,
+abstract = {Large-scale problems of engineering and scientific computing often require solutions of eigenvalue and related problems. This book gives a unified overview of theory, algorithms, and practical software for eigenvalue problems. The material is accessible for the first time to experts as well as many nonexpert users who need to choose the best state-of-the-art algorithms and software for their problems. Using an informal decision tree, just enough theory is introduced to identify the relevant mathematical structure that determines the best algorithm for each problem. The algorithm “leaves” of the decision tree range from the classical QR algorithm, which is most suitable for small dense matrices, to iterative algorithms for very large generalized eigenvalue problems. Algorithms are presented in a unified style as templates, with different levels of detail suitable for readers ranging from beginning students to experts.},
+address = {Philadelphia, PA},
+author = {Bai, Zhaojun and Chen, Tzu-Yi and Day, David and Demmel, James W and Dongarra, Jack J and Edelman, Alan and Freund, Roland W and Gu, Ming and K{\aa}gstr{\"{o}}m, Bo and Knyazev, Andrew and Koev, Plamen and Kowalski, Thomas and Lehoucq, Richard B and Li, Ren-Cang and Li, Xiaoye S and Lippert, Ross and Maschhoff, Kristi and Meerbergen, Karl and Morgan, Ronald and Ruhe, Axel and Saad, Yousef and Sleijpen, Gerard L G and Sorensen, Danny C and van der Vorst, Henk A},
+doi = {10.1137/1.9780898719581},
+editor = {Bai, Zhaojun and Demmel, James and Dongarra, Jack and Ruhe, Axel and van der Vorst, Henk},
+isbn = {978-0-89871-958-1},
+pages = {316},
+publisher = {SIAM},
+series = {Software, Environments, Tools},
+title = {Templates for the Solution of Algebraic Eigenvalue Problems: A Practical Guide},
+year = {2000}
+}
+
+@article{Hernandez2008,
+abstract = {Lanczos bidiagonalization is a competitive method for computing a partial singular value decompo- sition of a large sparse matrix, that is, when only a subset of the singular values and corresponding singular vectors are required. However, a straightforward implementation of the algorithm has the problem of loss of orthogonality between computed Lanczos vectors, and some reorthogonalization technique must be applied. Also, an effective restarting strategy must be used to prevent excessive growth of the cost of reorthogonalization per iteration. On the other hand, if the method is to be implemented on a distributed-memory parallel computer, then additional precau- tions are required so that parallel efficiency is maintained as the number of processors increases. In this paper, we present a Lanczos bidiagonalization procedure implemented in SLEPc, a software library for the solution of large, sparse eigenvalue problems on parallel computers. The solver is numerically robust and scales well up to hundreds of processors.},
+author = {Hern{\'{a}}ndez, Vicente and Rom{\'{a}}n, Jos{\'{e}} E and Tom{\'{a}}s, Andr{\'{e}}s},
+journal = {Electronic Transactions on Numerical Analysis},
+keywords = {SLEPc},
+pages = {68--85},
+title = {A Robust and Efficient Parallel {SVD} Solver based on Restarted {Lanczos} Bidiagonalization},
+url = {http://etna.mcs.kent.edu/volumes/2001-2010/vol31/abstract.php?vol=31{\&}pages=68-85},
+volume = {31},
+year = {2008}
+}
+
+@book{Stewart2001,
+address = {Philadelphia, PA},
+author = {Stewart, G W},
+publisher = {SIAM},
+title = {Matrix Algorithms. Volume {II}: Eigensystems},
+year = {2001}
+}
+
+@article{Simon1984,
+author = {Simon, Horst D.},
+doi = {10.2307/2007563},
+journal = {Mathematics of Computation},
+month = {jan},
+number = {165},
+pages = {115--142},
+title = {The {Lanczos} Algorithm With Partial Reorthogonalization},
+volume = {42},
+year = {1984}
+}
+
+@phdthesis{Larsen1998,
+abstract = {A partial reorthogonalization procedure (BPRO) for maintaining semi-orthogonality among the left and right Lanczos vectors in the Lanczos bidiagonalization (LBD) is presented. The resulting algorithm is mathematically equivalent to the symmetric Lanczos algorithm with partial reorthogonalization (PRO) developed by Simon, but works directly on the Lanczos bidiagonalization of A. For computing the singular values and vectors of a large sparse matrix with high accuracy, the BPRO algorithm uses only half the amount of storage and a factor of 3-4 less work compared to methods based on PRO applied to an equivalent symmetric system. Like PRO, the algorithm presented here is based on simple recurrences, which enable it to monitor the loss of orthogonality among the Lanczos vectors directly without forming inner products. These recurrences are used to develop a Lanczos bidiagonalization algorithm with partial reorthogonalization, which has been implemented in a MATLAB package for sparse SVD and...},
+author = {Larsen, Rasmus Munk},
+isbn = {0105-8517},
+mendeley-groups = {Iterative linear algebra},
+number = {537},
+school = {Aarhus},
+title = {{Lanczos} bidiagonalization with partial reorthogonalization},
+type = {PhD},
+url = {http://soi.stanford.edu/{~}rmunk/PROPACK/},
+volume = {27},
+year = {1998}
+}
+
+@article{Wu2000,
+abstract = {In this paper, we propose a restarted variant of the Lanczos method for symmetric eigenvalue problems named the thick-restart Lanczos method. This new variant is able to retain an arbitrary number of Ritz vectors from the previous iterations with a minimal restarting cost. Since it restarts with Ritz vectors, it is simpler than similar methods, such as the implicitly restarted Lanczos method. We carefully examine the effects of the floating-point round-off errors on stability of the new algorithm and present an implementation of the partial reorthogonalization scheme that guarantees accurate Ritz values with a minimal amount of reorthogonalization. We also show a number of heuristics on deciding which Ritz pairs to save during restart in order to maximize the overall performance of the thick-restart Lanczos method.},
+author = {Wu, Kesheng and Simon, Horst},
+doi = {10.1137/S0895479898334605},
+journal = {SIAM Journal on Matrix Analysis and Applications},
+keywords = {1,65f15,65f25,ams subject classifications,given an n,introduction,its eigenvalue $\lambda$ and,lanczos eigenvalue method,n matrix a,partial reorthogonalization,pii,s0895479898334605,the correspond-,thick-restart},
+month = {jan},
+number = {2},
+pages = {602--616},
+title = {Thick-Restart {Lanczos} Method for Large Symmetric Eigenvalue Problems},
+volume = {22},
+year = {2000}
+}
+
