@@ -5,8 +5,7 @@ pdf:
 
 travis:
 	#Create newunicodechar.sty
-	curl -O  http://mirrors.ctan.org/macros/latex/contrib/newunicodechar/newunicodechar.ins
-	latex newunicodechar.ins
+	curl -O http://math.sut.ac.th/lab/software/texlive/texmf-dist/tex/latex/newunicodechar/newunicodechar.sty
 	#Old latexmk doesn't understand auxdir and outdir options
 	latexmk -pdf -pdflatex='pdflatex %S %O -interaction=nonstopmode -halt-on-error' $(MAIN)
 
