@@ -429,7 +429,7 @@ Let $\rho$ be the ratio of the number of rows of $X$ to the number of columns of
 $X$. Then, the nonzero eigenvalues follow the distribution
 %
 \begin{equation}
-%    \label{eq:mplaw-ev}
+    \label{eq:mplaw-ev}
     p_e(\xi) = \frac {\sqrt{(\lambda_+-\xi)(\xi-\lambda_-)}} {2 \pi \sigma^2 \lambda x}
 \end{equation}
 %
@@ -441,7 +441,7 @@ When written in terms of the probability density of the singular values of $X$,
 the law reads
 %
 \begin{equation}
-%    \label{eq:mplaw-sv}
+    \label{eq:mplaw-sv}
     p_s(x) = \frac {\sqrt{(\sigma_+^2-x^2)(x^2-\sigma_-^2)}} {\pi \sigma^2 \min(1, \lambda) x}
 \end{equation}
 %
@@ -453,10 +453,12 @@ Figure~\ref{fig:mplaw} shows typical density plots for random eigenvalues
 and singular values for $\rho=1.5$.
 
 \begin{figure}
-\caption{Marchenko-Pastur law for $\rho=1.5$ (black lines) for the nonzero
-eigenvalues of a random covariance matrix ($XX^{T}$) and the singular
+\caption{Marchenko-Pastur law for $\rho=1.5$ (black lines) for the densities of
+nonzero eigenvalues of a random covariance matrix ($XX^{T}$) and the singular
 values of $X$ for iid matrix elements with mean 0 and variance 1
-(black lines). Shown for comparison are corresponding histograms (grey
+(black lines), corrsponding to \eqref{eq:mplaw-ev} and \eqref{eq:mplaw-sv}
+respectively.
+Shown for comparison are corresponding histograms (grey
 bars) of numerically sampled eigenvalues and singular vectors from
 a numerically sampled random matrix $X$ of size $1000\times667$,
 with iid Gaussian entries of mean 0 and variance 1.
