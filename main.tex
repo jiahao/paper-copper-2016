@@ -311,12 +311,14 @@ For people trained in numerical methods, it is surprising that well established 
 \begin{table}
     \centering
     \caption{Software comparison}
-    \begin{tabular}{ccc}
-        Software  & Algorithm                              & Used in genomics \\
-        EIGENSOFT & Householder bidiagonalization (LAPACK) & \cmark \\
-        FlashPCA  & Block power                            & \cmark \\
-        ARPACK    & Lanczos, $X^TX$                        & \xmark \\
-        PROPACK   & Lanczos                                & \xmark
+    \begin{tabular}{|c|c|c|}
+\hline
+        Software         & Algorithm                              & Used in genomics \\ \hline
+        EIGENSOFT/LAPACK & Householder bidiagonalization          & \cmark \\ \hline
+        FlashPCA         & Subspace iteration                     & \cmark \\ \hline
+        ARPACK           & Lanczos tridiagonalization on $X^TX$   & \xmark \\ \hline
+        PROPACK          & Lanczos bidiagonalization              & \xmark \\ \hline
+        SLEPc            & Lanczos bidiagonalization              & \xmark \\ \hline
     \end{tabular}
 \end{table}
 
