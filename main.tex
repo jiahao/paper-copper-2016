@@ -581,7 +581,7 @@ The scree plot of a genomics matrix
 \includegraphics[width=0.5\textwidth]{fig/synthetic/fig-empirical-scree}
 
 \caption{Left: Histogram of the singular values of a synthetic genomics data
-matrix of size $81700\times41505$ (grey bars), overlaid with the Marchenko-
+matrix of size $41505\times81700$ (grey bars), overlaid with the Marchenko-
 Pastur law for $\rho = 1.86$ (black line). Light grey vertical lines show the
 presence of 18 outlying singular values whose magnitudes exceed
 $1.1\sigma_+ \approx 529.7$.
@@ -624,7 +624,7 @@ this work & GKL (PRO, NR) & 321 & 302.4 & 15072 & $6\times10^{-4}$ & $6\times10^
 \end{tabular}
 
 \caption{Comparing various methods for computing the top 20 principal
-components on a simulated genotype matrix of size $80000\times40000$.
+components on a simulated genotype matrix of size $41505\times81700$.
 Linear algebra kernels were run on OpenBLAS v0.2.18 with 16 software threads.
 FlashPCA1 - Reimplementation in pure Julia of the published version of FlashPCA,
 FlashPCA2 - Reimplementation in pure Julia of the master version of FlashPCA available on GitHub,
