@@ -599,13 +599,13 @@ The largest component of the running time for FlashPCA is the subspace iteration
 \begin{table}
     \caption{Running time in seconds for 41505x81700 SNP matrix}
     \centering
-    \begin{tabular}{lrr}
-                                   & FlashPCA QR & Julia PO \\
-        Preprocessing              &   61        & 54            \\
-        Matrix multiplication      &  926        & .             \\
-        Subspace/Lanczos iteration & 1935        & 37            \\
-        Postprocessing             &   11        & 0             \\
-        Total                      & 2933        & 81
+    \begin{tabular}{lrrr}
+                                   & FlashPCA 1 & FlashPCA 2   & Julia PRO     \\
+        Preprocessing              &   54        &   61        & 54            \\
+        Matrix multiplication      &  971        &  926        & .             \\
+        Subspace/Lanczos iteration &   41        & 1935        & 37            \\
+        Postprocessing             &    7        &   11        & 0             \\
+        Total                      & 1073        & 2933        & 81
     \end{tabular}
 \end{table}
 
@@ -642,7 +642,7 @@ The largest component of the running time for FlashPCA is the subspace iteration
 \hline
 FlashPCA1 & Block power & 2280 & 2616.1 sec. & 6.4 & $4\times10^{+4}$ & $4\times10^{+4}$\tabularnewline
 \hline
-FlashPCA2 & Block power &  &  &  &  & \tabularnewline
+FlashPCA2 & Block power & 2933 &  &  &  & \tabularnewline
 \hline
 PROPACK & GKL (PRO, NR) & 298 & 264.6 & - & $4\times10^{-8}$ & $4\times10^{-8}$\tabularnewline
 \hline
@@ -672,11 +672,15 @@ and relative error in the singular values of $10^{-8}$ for the Lanczos methods.
 \end{table}
 
 \begin{figure}
-\caption{Convergence behavior of Lanczos with partial reorthogonalization, with top 20 singular values requested.
-\label{fig:lanczos-tsvd}
-}
-
+\caption{Convergence behavior of Lanczos with partial reorthogonalization. Top 20 singular values requested.}
+\label{fig:conv-lanczos-tsvd}
 \includegraphics[width=\textwidth]{fig/tsvdconv}
+\end{figure}
+
+\begin{figure}
+\caption{Errors of Ritz values for Lanczos with partial reorthogonalization. Top 20 singular values requested.}
+\label{fig:error-lanczos-tsvd}
+\includegraphics[width=\textwidth]{fig/tsvderror}
 \end{figure}
 
 \begin{figure}
