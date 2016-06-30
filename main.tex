@@ -87,7 +87,7 @@ software for principal component analysis of genomics matrices, such as FlashPCA
 
 \listoftodos
 
-\section{Introduction}
+\section{Principal components of genomics data}
 
 The high level goal of personalized medicine is to tailor treatments of disease
 to an individual's sensitivities to treatment, allergies, or other genetic
@@ -151,7 +151,8 @@ are already commonplace today, with order of magnitude growth expected within th
 available algorithms for parallel computing and numerical linear algebra to
 handle the increasing demands of data processing and dimensionality reduction.
 
-\subsection{The statistical significance of principal components of genomics matrices}
+
+\subsection{The statistical significance of principal components}
 
 The main statistical tool used in GWAS is regression, using some model that
 associates genotype variation with phenotype variation.
@@ -178,18 +179,28 @@ introduced by not treating the presence of population substructure.
 
 \subsection{The linear regression model}
 
-Statisticians are interested in quantifying the uncertainty in quantifications and consequently they introduce the regression model from probabilistic in a probabilistic setting. Statisticians will assume that the effect from genotype to phenotype can be summarized by a conditional expectation. If we for individual $i$ denote the genotype measurement by $x_i$ and the phenotype measurement by $y_i$ this can be written as $\E(y_i|x_i)=\beta_0 + \beta_1 x_i$. A popular formulation of the this model is
+The statistical theory of regressing phenotypes against genotypes is expressed
+in terms from conditional expectations. If we for individual $i$ denote the genotype measurement by $x_i$ and the phenotype measurement by $y_i$, the conditional
+expectation of interest can be written as $\E(y_i|x_i)=\beta_0 + \beta_1 x_i$.
+A popular formulation of the this model is
+%
 \begin{equation*}
     y_i = \beta_0 + x_i \beta_1 + \varepsilon_i\quad i=1,\dots,n
 \end{equation*}
-where $n$ is the number of observations which in this case would be the number of individuals for which we have genotype data. The variable $\varepsilon_i$ is called the error term and must satisfy $\E(\varepsilon_i|x_i)=0$. More generally, $\varepsilon_i$ is the conditional distribution $y_i - \beta_0 - x_i\beta_1|x_i$. This can also be written in matrix form
+%
+where $n$ is the number of observations which in this case would be the number of individuals for which we have genotype data.
+The variable $\varepsilon_i$ is called the error term and must satisfy $\E(\varepsilon_i|x_i)=0$.
+More generally, $\varepsilon_i$ is the conditional distribution $y_i - \beta_0 - x_i\beta_1|x_i$.
+
+The multivariate expression can be written conveniently in matrix form
 
 \begin{equation}
 \label{eq:linreg}
     y = X\beta + \varepsilon
 \end{equation}
-
+%
 with
+%
 \begin{equation*}
     X = \begin{pmatrix}
         1 & x_1\\
@@ -197,31 +208,43 @@ with
         1 & x_n
     \end{pmatrix}
 \end{equation*}
-
-and in this notation, the well known least squares estimator can be written as
+%
+and in this notation, the well-known least squares estimator for the coefficient
+$\beta$ can be written as
+%
 \begin{equation}
 \label{eq:ols}
     \hat{\beta} = (X'X)^{-1}X'y.
 \end{equation}
 
-It might seem unnecessarily complicated to use probability theory to derive the least squares solution to the regression problem. However, when $(x_i,y_i)$ pairs are considered to be random variables then also $\hat{\beta}$ is a random variable and the mean and variance of $\hat{\beta}$ can be used to quantify uncertainty about the least square solution.
-
+The conditional probability treatment demonstrates that when $(x_i,y_i)$ pairs
+are considered to be random variables, then $\hat{\beta}$ is also a random
+variable, with its mean and variance quantifying uncertainty about the least
+squares solution.
 First, notice that the least squares estimator \eqref{eq:ols} can be written
+%
 \begin{equation*}
     \hat{\beta} = \beta + (X'X)^{-1}X'\varepsilon
 \end{equation*}
+%
 and the expected value of the estimator is
+%
 \begin{equation}
     \E(\hat{\beta}|X) = \E(\beta + (X'X)^{-1}X'\varepsilon|X) =
         \beta + (X'X)^{-1}X'\E(\varepsilon|X) = \beta
 \end{equation}
-which means that the estimator is \emph{unbiased}. Statisticians are interested in the variability of $\hat{\beta}$ under changes to the data than could be considered small errors and the most common measurement for the variability of an estimator is the (conditional) variance, i.e.
+%
+which means that the estimator is \emph{unbiased}. Statisticians are interested in the variability of $\hat{\beta}$ under changes to the data that could be considered small errors. The most common measurement for the variability of an estimator is the (conditional) variance, i.e.
+%
 \begin{equation*}
     \Var(\hat{\beta}|X) = \Var(\beta + (X'X)^{-1}X'\varepsilon|X) =
         (X'X)^{-1}X'\Var(\varepsilon|X)X(X'X)^{-1}.
 \end{equation*}
 
-This shows that variance of $\hat{\beta}$ depends on the (conditional) variance of $\varepsilon$ which hasn't been discussed yet. In classical treatments of the linear regression model it is typically assumed that, conditionally on $x_i$, the $y_i$s are independent and the have the same variance which is the same as $\Var(\varepsilon|X)=\sigma^2 I$ for some unknown scalar $\sigma^2$. Under this assumption, the variance of $\hat{\beta}$ reduces to $\sigma^2 (X'X)^{-1}$. The magnitude of this quantity is unknown because $\sigma^2$ is an unknown parameter but $\sigma^2$ can be \emph{estimated} from the data. The usual estimator is $\hat{\sigma}^2=\frac{1}{n} \|\hat{\varepsilon}\|^2$ where $\hat{\varepsilon} = y - X\hat{\beta}$. This leads to the estimate of the (conditional) variance of the estimator $\widehat{\Var(\hat{\beta}|X)} = \hat{\sigma}^2(X'X)^{-1}$.
+This shows that variance of $\hat{\beta}$ depends on the (conditional) variance of $\varepsilon$, which has not been discussed yet. In classical treatments of the linear regression model it is typically assumed that, conditionally on $x_i$, the $y_i$s are independent and the have the same variance which is the same as $\Var(\varepsilon|X)=\sigma^2 I$ for some unknown scalar $\sigma^2$. Under this assumption, the variance of $\hat{\beta}$ reduces to $\sigma^2 (X'X)^{-1}$. The magnitude of this quantity is unknown because $\sigma^2$ is an unknown parameter but $\sigma^2$ can be \emph{estimated} from the data. The usual estimator is
+$\hat{\sigma}^2=\frac{1}{n} \|\hat{\varepsilon}\|^2$
+where $\hat{\varepsilon} = y - X\hat{\beta}$.
+This leads to the estimate of the (conditional) variance of the estimator $\widehat{\Var(\hat{\beta}|X)} = \hat{\sigma}^2(X'X)^{-1}$.
 
 The independence assumption is often used in statistics and can be justified from an assumption of random sampling with replacement. In studies where data is passively collected, this might not be a reasonable assumption as explained in the previous section. Non-random sampling might lead to correlation between the phenotypes even after conditioning on the genotypes. In consequence of that, $\Var(\varepsilon|X)$ will no longer be diagonal but have some general positive definite structure $\Sigma$ and $\Var(\hat{\beta}|X)=(X'X)^{-1}X'\Sigma X(X'X)^{-1}$. Since $\Sigma$ in general is consists of $\frac{n(n+1)}{2}$ parameters it cannot be estimated consistently.
 
@@ -233,7 +256,9 @@ In order to analyze the problem with correlated observations, it is convenient t
 
 where is assumed that $\Var(\eta|X)=\Sigma_\eta$ and $\Var(\xi|X)=\sigma^2_\xi I$. Furthermore, it is assumes that the two error terms are independent.
 
-\subsection{Fixed effect estimation}
+
+\subsubsection{Fixed effect estimation}
+
 A possible solution to the problem of producing a reliable estimate of the variance of $\hat{\beta}$ is to come up with a set of variables $z_1,\dots,z_k$ that proxies the correlation between the observations, i.e. $\eta=Z\gamma$. By simply including the variables $z_1,\dots,z_k$ in the regression model, it possible to remove the correlation which distorts the variance estimate for $\hat{\beta}$. For the regression $y|X,Z$, we get the least squares estimator
 \begin{equation*}
     \hat{\theta} = \begin{pmatrix}\hat{\beta} \\ \hat{\gamma}\end{pmatrix} =
@@ -258,15 +283,17 @@ which has variance
         \begin{pmatrix} X'X & X'Z \\ Z'X & Z'Z \end{pmatrix}^{-1}
 \end{equation*}.
 
-In many applications, a few pricipal components of the covariance matrix of the complete SNP dataset is used to proxy for the correlation between individuals. Computing principal components is therefore often a first step in a GWAS. In the following section we give a brief overview over the available software for computing the principal component of SNP datasets.
+In many applications, a few pricipal components of the covariance matrix of the complete SNP dataset is used as a proxy for the correlation between individuals. Computing principal components is therefore often a first step in a GWAS. In the following section we give a brief overview over the available software for computing the principal component of SNP datasets.
 
-\section{Software for computing the SVD of genomics data}
+
+\subsection{Software for computing the principal components of genomics data}
 
 The software stack for GWAS is generally based on command line tools written completely in C/C++. Not only is the core computational algorithm written in C/C++ but also much of the pre- and postprocessing of the data. The datasets can be large but and the computations at times heavy but it has been a surprise to learn the extend to which analyses are carried out directly from the command line instead of using higher level languages like Matlab, R, or Python. This choice seems to limit the tools available to the analysts because, unless he is a C/C++ programmer, the programmer is restricted to the set of options included in the command line tool.
 
 Two major packages exist for computing the PCA in the GWAS software stack. The package \emph{EIGENSOFT} accompanied~\cite{patterson2006population} which popularized the use of PCA in GWAS. In the original version of the package, the routine \texttt{smartpca} for computing the PCA of a SNP matrix was based on an eigenvalue solver from LAPACK. In consequence, all the eigenvalues and vectors of the SNP matrix were computed even though only a few of them were used as principal components. Computing the full decomposition is very inefficient and as the number of available samples has grown over the year, this approach has become impractical.
 
 More recently, \emph{FlashPCA}~\cite{abraham2014fast}, has emerged as a potentially faster alternative to EIGENSOFT's \texttt{smartpca}. The PCA routine is based on a truncated SVD algorithm described in~\cite{halko2011finding}. More specifically, FlashPCA uses a subspace iteration scheme with orthogonalization by QR in each iteration. The convergence criterion is based on the Frobenius norm of the changes to the orthogonal basis. The QR orthogonalization step in the implementation of FlashPCA routine deviates from the algorithm in described~\cite{abraham2014fast} which only normalizes columnwise. Our conjecture was that this change was made to avoid loss of orthogonality in the subspace basis and the author of the package has confirmed this to us. In consequence, the timings in~\cite{abraham2014fast} do not correspond to the performance of the software run with default settings since the QR orthogonalization is much slower than the columnwise normalization. Furthermore, a degenerate basis might also converge much faster because it eventually just converges to the single largest eigenvalue.
+
 
 \subsection{Comparing TSVD and FlashPCA}
 For our synthetic dataset the time difference between the two methods is large. The initial preprocessing steps where the matrix is read and scaled contribute very little to any of the methods. For FlashPCA, the running time consists of two major components which is an initial matrix multiply, $XX'$, and the subsequent subspace iterations. By tracking the convergence criterion at each iteration it is clear that the convergence is very slow.
