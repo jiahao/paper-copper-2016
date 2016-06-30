@@ -153,12 +153,30 @@ handle the increasing demands of data processing and dimensionality reduction.
 
 \subsection{The statistical significance of principal components of genomics matrices}
 
-Often in statistical studies when data is observed passively, there can be doubt about the causal direction for the variables included in the analysis. However, it is generally accepted that genotypes cannot be caused by other factors included in the analysis and consequently the correlation between genotypes and phenotype could in theory be considered causal.
+The main statistical tool used in GWAS is regression, using some model that
+associates genotype variation with phenotype variation.
+While correlation does not imply causation in and of itself, it is generally
+accepted that genotypes cannot be caused by other factors included in the
+analysis, and consequently the correlation between genotypes and phenotype could
+in theory be considered causal in the limited scope of GWAS.
+The \emph{linear} regression model is one the simplest useful models, and can be
+motivated in several different ways. One formulation is in terms of least squares
+minimization to find the coefficients that minimize the sum of squared distances
+between a hyperplane and the observations. Another familiar formulation is that
+of finding a projection of the a vector of observations down onto the space
+spanned by the vectors of explanatory variables.
+One caveat in statistical studies is the assumption that the observations are
+randomly sampled with replacement, and hence that the observations can be
+assumed to be independent. In the context of statistical genomics, the
+independence assumption is one of several bundled into the principle of
+Hardy-Weinberg equilibrium~\cite{Hardy1908,Weinberg1908}, which is commonly
+assumed in statistical genetics~\cite{Laird2011}. However, caution must be taken
+to remove possible sampling bias due to the collection of genetic data from
+patients from a single hospital or hospital network, on top of sampling bias
+introduced by not treating the presence of population substructure.
 
-The classical assumption in statistical studies is that the observations are randomly sampled with replacement. The reason for assumption is the implication which is that the observations can be considered independent. This might not be exactly true but should be approximately true for many statistical results to be reliable. Most collections of SNP data are from patients at a single or few hospitals in a single country. The random sampling assumption is therefore often challenged.
 
-\subsection{The model}
-In a GWAS, it is customary to use a regression model for associating the genotype variation at some location in the genome and the phenotype variation. The \emph{linear} regression model can be motivated either in several different way. The readers of this will probably be familiar with the least squares formulation of the regression model which simply seeks to find the coefficients that minimize the sum of squared distances between a hyperplane and the observations. Another familiar formulation is the projection formulation where the regression problem is seen as the problem of projection a vector of observations down on the space spanned by the vectors of explanatory variables.
+\subsection{The linear regression model}
 
 Statisticians are interested in quantifying the uncertainty in quantifications and consequently they introduce the regression model from probabilistic in a probabilistic setting. Statisticians will assume that the effect from genotype to phenotype can be summarized by a conditional expectation. If we for individual $i$ denote the genotype measurement by $x_i$ and the phenotype measurement by $y_i$ this can be written as $\E(y_i|x_i)=\beta_0 + \beta_1 x_i$. A popular formulation of the this model is
 \begin{equation*}
