@@ -87,34 +87,37 @@ software for principal component analysis of genomics matrices, such as FlashPCA
 
 \listoftodos
 
-This paper is to describe the role that partial factorizations play in
-organizing the various methods for doing singular value decompositions in
-Julia
+\section{Introduction}
 
+The high level goal of personalized medicine is to tailor treatments of disease
+to an individual's sensitivities to treatment, allergies, or other genetic
+predispositions, using all available data about an individual.
+Developers of personalized medical treatments are therefore interested in how an
+individual's genome, both in isolation and within the context of the wider human
+population, can be used to predict desired clinical outcomes (known as
+comorbidities or phenotypes)~\cite[Ch. 8]{Laird2011}.
+Genome-wide association studies (GWASs) are a new and popular technique for
+studying the signficance of human genome data for personalized medicine.
+They seek to associate gene variation with variations in outcome variables
+typically measuring a phenotype related to an illness, e.g.\ the clinical
+observation of a disease. GWASs study the relationship between phenotypes and
+genotypes (genome data).
 
-\section{Principal components of genome data}
-
-Genomics data is often encoded in a matrix expressing the number of mutations
-from a reference genome.
-The genomics matrix is indexed by gene positions on the rows and patients on the
-columns. Each matrix element counts the number of mutations a patient has from
-some reference genome. Since most human cells are at most diploid, i.e.\ have
-two sets of chromosomes,
+The genome data used in
+GWASs are are often encoded in a matrix expressing the number of mutations
+from a reference genome, which we will refer to as a \textit{genomics matrix}.
+By convention, the genomics matrix is indexed by patients (or other test
+subjects) on the rows and gene markers on the columns which represent some
+coordinate within the human genome. A common example of gene markers are
+single nucleotide polymorphisms (SNPs), which represent gene positions with
+pointwise mutations of interest that express variation in the genotype across
+humans. Oftentimes, the explanatory data in a GWAS are simply called SNP data.
+Since most human cells are at most diploid, i.e.\ have two sets of chromosomes,
 the matrix elements can only be 0, 1, or 2 (or missing).
 
-Principal component analysis has been used both to understand variation in
-the statistics of human genes, as well as to correct for unwanted variations.
-Perhaps most famously, principal components of human genome data have been used
-to reconstruct the history of human evolution by identifying population
-substructure and their relationship to other factors such as geography~\cite{Menozzi1978,Cavalli1994}
-(but see \cite{Novembre2008} for criticisms of this approach).
-
-In the context of genome-wide association studies (GWAS) for personalized
-medicine, the variations due to population substructure now become confounding
-factors which bias the study of which genes are correlated with desired clinical
-outcomes (known as ``comorbidities'')~\cite[Ch. 8]{Laird2011}.
 There are two major confounding sources of variation which are considered in
-the analysis of human genome data:
+the analysis of human genome data, each of which have significance for the
+expected spectral properties of the matrix:
 
 \paragraph{Population stratification/admixing}
 Population stratification is the phenomenon of common genetic variation within
@@ -129,18 +132,30 @@ sampling bias in the columns (human genomes) produced by having common ancestors
 thus increasing the nominally observed frequency of certain
 mutations~\cite{Voight2005,Astle2009}. Relatedness is usually detected and removed in
 a separate preprocessing step~\cite{PLINK}. Any remaining related samples will
-result in (near) linear dependencies in the columns of the genomic matrix,
+result in (near) linear dependencies in the rows of the genomic matrix,
 leading to the presence of several singular values that are very small or zero.
 
-Principal components analysis (PCA) has been proposed as a way to uncover population structure of this form~\cite{Patterson2006}.
+Principal component analysis (PCA) was historically first used as a dimensionality
+reduction technique to summarize the variation in the human genes and study its
+implications for human evolution in relation to other factors such as
+geography and history~\cite{Menozzi1978,Cavalli1994,Novembre2008}.
+However, we will focus on a more modern use of principal components (PCs) in
+representing confounding effects in the statistical modeling of genome-wide
+association studies (GWASs) for personalized medicine~\cite{Patterson2006}.
 
+Genomics matrices form an interesting use case for the classical techniques of
+numerical linear algebra, as the amount of sequenced genome data grows
+exponentially~\cite{Stephens2015}. As the price of sequencing genome data declines
+rapidly, genomics studies involving hundreds of thousands of individuals (columns)
+are already commonplace today, with order of magnitude growth expected within the next year or two. Therefore, genomics researchers will require access to the best
+available algorithms for parallel computing and numerical linear algebra to
+handle the increasing demands of data processing and dimensionality reduction.
 
-\section{GWAS}
-Genome wide association studies (GWAS) seek to associate gene variation with variations in outcome variables typically measuring a quantity related to an illness. The typical measurement for the gene variation in the genotype at different locations in the genome. Not all locations in the genome have variation in the genotype across humans so a GWAS only includes locations with variation. Locations in the genome with variation are called single nucleotide polymorphisms (SNPs) and often the explanatory data in a GWAS is simply called SNP data. The various outcome variables in a GWAS are typically called phenotypes so in short GWASs examine the relation between genotypes and phenotypes. Often in statistical studies when data is observed passively there can be doubt about the causal direction for the variables included in the analysis. However, it is generally accepted that genotypes cannot be caused by other factors included in the analysis and consequently the correlation between genotypes and phenotype could in theory be considered causal.
+\subsection{The statistical significance of principal components of genomics matrices}
 
-The genotype data is collected for a groups of individuals of varying sizes. Some studies have genotype data for hundreds of individuals but the price of sequencing genome data is rapidly declining so collection of thousands of individuals are already becoming common and it is expected that we will soon  have access to genotype data for millions of individuals.
+Often in statistical studies when data is observed passively, there can be doubt about the causal direction for the variables included in the analysis. However, it is generally accepted that genotypes cannot be caused by other factors included in the analysis and consequently the correlation between genotypes and phenotype could in theory be considered causal.
 
-The classical assumption in statistical studies is that the observations are randomly sampled with replacement. The reason for assumption is the implication which is that the observations can be considered independent. This might not be exactly true but should be approximately true for many statistical results to be reliable. Most collections of SNP data are from patients at a single or few hospitals in a single country. The random sampling assumption is therefore often challenged
+The classical assumption in statistical studies is that the observations are randomly sampled with replacement. The reason for assumption is the implication which is that the observations can be considered independent. This might not be exactly true but should be approximately true for many statistical results to be reliable. Most collections of SNP data are from patients at a single or few hospitals in a single country. The random sampling assumption is therefore often challenged.
 
 \subsection{The model}
 In a GWAS, it is customary to use a regression model for associating the genotype variation at some location in the genome and the phenotype variation. The \emph{linear} regression model can be motivated either in several different way. The readers of this will probably be familiar with the least squares formulation of the regression model which simply seeks to find the coefficients that minimize the sum of squared distances between a hyperplane and the observations. Another familiar formulation is the projection formulation where the regression problem is seen as the problem of projection a vector of observations down on the space spanned by the vectors of explanatory variables.
