@@ -66,11 +66,19 @@
 \tableofcontents
 
 \begin{abstract}
-We describe the implementation of fast practical Lanczos algorithms employing
-thick restarting and partial reorthgonalization in Julia. We present a simple
-model for matrices that encode genomics data in genome-wide association studies
-(GWAS), and demonstrate that Lanczos methods outperform conventionally used
-software for principal component analysis of genomics matrices, such as FlashPCA.
+Finding the largest few principal components of a matrix of genetic data is a
+common task in genome-wide association studies (GWASs), both for dimensionality
+reduction and for identifying unwanted factors of variation.
+We describe a simple random matrix model for matrices that arise in GWASs,
+showing that the singular values have a bulk behavior that obeys a
+Marchenko-Pastur distributed with a handful of large outliers.
+We also implement Golub-Kahan-Lanczos (GKL) bidiagonalization in the Julia
+programming language, providing thick restarting and a choice between full
+and partial reorthongalization strategies to control numerical roundoff.
+Our implementation of GKL bidiagonalization is up to 36 times faster than
+software tools used commonly in genomics data analysis for computing principal
+components, such as EIGENSOFT and FlashPCA, which use dense LAPACK routines
+and randomized subspace iteration respectively.
 \end{abstract}
 
 \begin{keywords}
@@ -79,7 +87,8 @@ software for principal component analysis of genomics matrices, such as FlashPCA
     genome-wide association studies,
     statistical genetics,
     Lanczos bidiagonalization,
-    Julia programming language
+    Julia programming language,
+    subspace iteration
 \end{keywords}
 
 \begin{AMS}
@@ -92,26 +101,24 @@ software for principal component analysis of genomics matrices, such as FlashPCA
 
 \section{Principal components of genomics data}
 
-The high level goal of personalized medicine is to tailor treatments of disease
+Personalized medicine or precision medicine is a growing movement to tailor treatments of disease
 to an individual's sensitivities to treatment, allergies, or other genetic
-predispositions, using all available data about an individual.
+predispositions, using all available data about an individual~\cite{Desmond2012}.
 Developers of personalized medical treatments are therefore interested in how an
 individual's genome, both in isolation and within the context of the wider human
 population, can be used to predict desired clinical outcomes (known as
 comorbidities or phenotypes)~\cite[Ch. 8]{Laird2011}.
 Genome-wide association studies (GWASs) are a new and popular technique for
-studying the signficance of human genome data for personalized medicine.
-They seek to associate gene variation with variations in outcome variables
-typically measuring a phenotype related to an illness, e.g.\ the clinical
-observation of a disease. GWASs study the relationship between phenotypes and
-genotypes (genome data).
+studying the significance of human genome data, by studying the associate genotype
+variation with phenotype variations in outcome variables e.g.\ the clinical
+observation of a disease.
 
 The genome data used in
 GWASs are are often encoded in a matrix expressing the number of mutations
 from a reference genome, which we will refer to as a \textit{genomics matrix}.
 By convention, the genomics matrix is indexed by patients (or other test
 subjects) on the rows and gene markers on the columns which represent some
-coordinate within the human genome. A common example of gene markers are
+coordinate or locus within the human genome. A common example of gene markers are
 single nucleotide polymorphisms (SNPs), which represent gene positions with
 pointwise mutations of interest that express variation in the genotype across
 humans. Oftentimes, the explanatory data in a GWAS are simply called SNP data.
@@ -120,12 +127,13 @@ the matrix elements can only be 0, 1, or 2 (or missing).
 
 There are two major confounding sources of variation which are considered in
 the analysis of human genome data, each of which have significance for the
-expected spectral properties of the matrix:
+spectral properties of the matrix:
 
 \paragraph{Population stratification/admixing}
 Population stratification is the phenomenon of common genetic variation within
 mutually exclusive subpopulations defined along racial, ethnic or geographic
-divisions~\cite{Pritchard1999,Cardon2003}. (Admixing is a relaxation of the mutual exclusion constraint~\cite{Devlin1999,Sankararaman2008}.)
+divisions~\cite{Pritchard1999,Cardon2003}. (Admixture models relax the mutual
+exclusion constraint~\cite{Devlin1999,Sankararaman2008}.)
 In linear algebraic terms, the genomics matrix will have a low rank component
 with large singular values.
 
@@ -134,7 +142,8 @@ Sometimes called kinship or inbreeding, cryptic relatedness is an increase in
 sampling bias in the columns (human genomes) produced by having common ancestors,
 thus increasing the nominally observed frequency of certain
 mutations~\cite{Voight2005,Astle2009}. Relatedness is usually detected and removed in
-a separate preprocessing step~\cite{PLINK}. Any remaining related samples will
+a separate preprocessing step, but it is not always possible to remove
+fully~\cite{PLINK}. Any remaining related samples will
 result in (near) linear dependencies in the rows of the genomic matrix,
 leading to the presence of several singular values that are very small or zero.
 
@@ -142,10 +151,9 @@ Principal component analysis (PCA) was historically first used as a dimensionali
 reduction technique to summarize the variation in the human genes and study its
 implications for human evolution in relation to other factors such as
 geography and history~\cite{Menozzi1978,Cavalli1994,Novembre2008}.
-However, we will focus on a more modern use of principal components (PCs) in
-representing confounding effects in the statistical modeling of genome-wide
-association studies (GWASs) for personalized
-medicine~\cite{Chen2003,Patterson2006,Price2006,Zhu2002,Zhang2003}.
+However, we will focus on the more modern use of principal components (PCs) to
+represent the confounding effects of population substructure in the statistical
+modeling of GWASs~\cite{Chen2003,Patterson2006,Price2006,Zhu2002,Zhang2003}.
 
 Genomics matrices form an interesting use case for the classical techniques of
 numerical linear algebra, as the amount of sequenced genome data grows
@@ -160,15 +168,14 @@ handle the increasing demands of data processing and dimensionality reduction.
 
 The main statistical tool used in GWAS is regression, using some model that
 associates genotype variation with phenotype variation.
-While correlation does not imply causation in and of itself, it is generally
-accepted that genotypes cannot be caused by other factors included in the
-analysis, and consequently the correlation between genotypes and phenotype could
-in theory be considered causal in the limited scope of GWAS.
+While correlation does not imply causation in and of itself, the central dogma
+of molecular biology states that causality flows from genetic data in DNA and RNA
+to phenotype data in expressed proteins~\cite{Crick1970}. Consequently, correlations between genotypes and phenotypes could in theory have causal significance.
 The \emph{linear} regression model is one the simplest useful models, and can be
-motivated in several different ways. One formulation is in terms of least squares
+motivated in several different ways. One way is in terms of least squares
 minimization to find the coefficients that minimize the sum of squared distances
-between a hyperplane and the observations. Another familiar formulation is that
-of finding a projection of the a vector of observations down onto the space
+between a hyperplane and the observations. Another way to formulate the problem
+as finding a projection of the a vector of observations down onto the space
 spanned by the vectors of explanatory variables.
 One caveat in statistical studies is the assumption that the observations are
 randomly sampled with replacement, and hence that the observations can be
@@ -183,7 +190,7 @@ introduced by not treating the presence of population substructure.
 
 \subsection{The linear regression model}
 
-The statistical theory of regressing phenotypes against genotypes is expressed
+The statistical theory of regressing phenotypes against genotypes is best expressed
 in terms from conditional expectations. If we for individual $i$ denote the genotype measurement by $x_i$ and the phenotype measurement by $y_i$, the conditional
 expectation of interest can be written as $\E(y_i|x_i)=\beta_0 + \beta_1 x_i$.
 A popular formulation of the this model is
@@ -250,14 +257,14 @@ $\hat{\sigma}^2=\frac{1}{n} \|\hat{\varepsilon}\|^2$
 where $\hat{\varepsilon} = y - X\hat{\beta}$.
 This leads to the estimate of the (conditional) variance of the estimator $\widehat{\Var(\hat{\beta}|X)} = \hat{\sigma}^2(X^TX)^{-1}$.
 
-The independence assumption is often used in statistics and can be justified from an assumption of random sampling with replacement. In studies where data is passively collected, this might not be a reasonable assumption as explained in the previous section. Non-random sampling might lead to correlation between the phenotypes even after conditioning on the genotypes. In consequence of that, $\Var(\varepsilon|X)$ will no longer be diagonal but have some general positive definite structure $\Sigma$ and $\Var(\hat{\beta}|X)=(X^TX)^{-1}X^T\Sigma X(X^TX)^{-1}$. Since $\Sigma$ in general is consists of $\frac{n(n+1)}{2}$ parameters it cannot be estimated consistently.
+The independence assumption is often used in statistics and can be justified from an assumption of random sampling with replacement. In studies where data is passively collected, this might not be a reasonable assumption as explained in the previous section. Non-random sampling might lead to correlation between the phenotypes even after conditioning on the genotypes. In consequence of that, $\Var(\varepsilon|X)$ will no longer be diagonal, but have some general positive definite structure $\Sigma$ and $\Var(\hat{\beta}|X)=(X^TX)^{-1}X^T\Sigma X(X^TX)^{-1}$. Since $\Sigma$ in general consists of $\frac{n(n+1)}{2}$ parameters, it cannot be estimated consistently.
 
 In order to analyze the problem with correlated observations, it is convenient to decompose the error into a part that contains the cross-individual correlation and a part that is diagonal and therefore only describes the variance for each individual. This may be written as
-
+%
 \begin{equation*}
     y_i = \beta_0 + x_i\beta_1 + \eta_i + \xi_i
 \end{equation*}
-
+%
 where is assumed that $\Var(\eta|X)=\Sigma_\eta$ and $\Var(\xi|X)=\sigma^2_\xi I$. Furthermore, it is assumes that the two error terms are independent.
 
 
@@ -269,7 +276,7 @@ One way to produce a reliable estimate of the variance of $\hat{\beta}$ is to co
     \begin{pmatrix}\hat{\beta} \\ \hat{\gamma}\end{pmatrix} =
     \begin{pmatrix}
         X^TX & X^TZ \\ Z^TX & Z^TZ
-    \end{pmatrix}^{-1}
+    \end{pmatrix}^{-1}\!\!
     \begin{pmatrix}
         X^T \\ Z^T
     \end{pmatrix}
@@ -277,18 +284,18 @@ One way to produce a reliable estimate of the variance of $\hat{\beta}$ is to co
     \theta +
             \begin{pmatrix}
         X^TX & X^TZ \\ Z^TX & Z^TZ
-    \end{pmatrix}^{-1}
+    \end{pmatrix}^{-1}\!\!
     \begin{pmatrix}
         X^T \\ Z^T
-    \end{pmatrix}\xi.
+    \end{pmatrix}\xi,
 \end{equation*}
 which has variance
 \begin{equation*}
     \Var\left(\begin{pmatrix}\hat{\beta} \\ \hat{\gamma}\end{pmatrix}|X,Z\right)=\sigma_\xi^2
-        \begin{pmatrix} X^TX & X^TZ \\ Z^TX & Z^TZ \end{pmatrix}^{-1}
-\end{equation*}.
+        \begin{pmatrix} X^TX & X^TZ \\ Z^TX & Z^TZ \end{pmatrix}^{-1}.
+\end{equation*}
 
-In many applications, a few pricipal components of the covariance matrix of the complete SNP dataset is used as a proxy for the correlation between individuals. Computing principal components is therefore often a first step in a GWAS. In the following section we give a brief overview over the available software for computing the principal component of SNP datasets.
+In many applications, a few pricipal components of the covariance matrix of the complete SNP dataset is used as a proxy for the correlation between individuals. Computing principal components is therefore often a first step in analyzing GWASs.
 
 
 \subsection{Software for computing the principal components of genomics data}
