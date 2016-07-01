@@ -317,8 +317,11 @@ not part of the curriculum in statistical genomics.
 
 \begin{table}
     \centering
-    \caption{List of software used for principal components analysis by genomics
-    scientists and numerical linear algebraists. $^*$: available in EIGENSOFT~\cite{Patterson2006}. $^\dagger$: uses dense LAPACK routines.
+    \caption{List of software used for principal components analysis in statistical
+    genomics. Notably, common packages known to numerical linear algebraists are
+    rarely, if ever, used.
+    $^*$: available in EIGENSOFT~\cite{Patterson2006}.
+    $^\dagger$: uses dense LAPACK routines.
     \label{tab:sw}}
     \begin{tabular}{cccc}
        \hline
@@ -339,10 +342,10 @@ In this section we present a very simple random model which accurately mimics
 the spectral features observed in real data matrices.
 We hypothesize that the spectral properties of human patient genotype data can
 be modeled the Julia code in Algorithm~\ref{code:model}, which captures the
-confounding effects of population stratification and kinship.
+confounding effects of population admixture and cryptic relatedness.
 The former is modeled by setting randomly select subblocks to the same value,
 whereas the latter is modeled by duplicating rows, thus purposely introducing
-linear dependence into the column space. This model, while simplistic, can be
+linear dependence into the row space. This model, while simplistic, can be
 tuned to reproduce the scree plot observed in empirical data matrices and we
 expect that such models may be of interest to researchers developing numerical
 algorithms that lack access to actual data, which are often access-restricted
@@ -434,15 +437,18 @@ Marchenko-Pastur law~\cite{Marchenko1967} with parameter $\rho = 1.86$.
 \includegraphics[width=0.45\textwidth]{fig/synthetic/fig-empirical-scree}
 
 \caption{Left: Histogram of the singular values of a synthetic genomics data
-matrix of size $41505\times81700$ (grey bars), overlaid with the Marchenko-
-Pastur law for $\rho = 1.86$ (black line). Light grey vertical lines show the
+matrix of size $41505\times81700$ (grey bars) generated with the code in
+Algorithm~\ref{code:model}, overlaid with the Marchenko-
+Pastur law \eqref{eq:mplaw-sv} for $\rho = 1.86$ (black line).
+Light grey vertical lines show the
 presence of 18 outlying singular values whose magnitudes exceed
 $1.1\sigma_+ \approx 529.7$.
 Right: Scree plot of the singular values of the same matrix
 (black solid lines), showing the presence of a large, low rank portion
 of approximately rank 10 (inset), and an asymptotic convergence to the same
-Marchenko-Pastur law (red dotted line).}
+Marchenko-Pastur law (red dotted line).
 \label{fig:empirical-spectrum}
+}
 \end{figure}
 
 
@@ -502,11 +508,13 @@ should correspond to eigenvalues that were different from those expected from a
 pure random covariance matrix,
 and comparing in particular the largest eigenvalue against one randomly sampled
 from the Tracy-Widom distribution~\cite{Tracy1993,Tracy1994}.
-Here, we observe that the bulk distribution of singular values in genomics
-matrices empirically satisfies the Marchenko-Pastur law, albeit with a
-modified parameter $\rho = 1.86$ as opposed to the value $81700/41505=1.97$
-which would be expected from taking the ratio of the number of rows to the
-number of columns.
+This analysis only shows that the matrix is not iid. In contrast, we show here
+an explicit construction of a random matrix, whose elements are not iid, that
+can generate a realistic spectrum of singular values that consists of several
+large outliers and a bulk distribution that empirically satisfies the
+Marchenko-Pastur law, albeit with a modified parameter $\rho = 1.86$ as opposed
+to the value $81700/41505=1.97$ which would be expected from taking the ratio of
+the number of rows to the number of columns.
 
 
 \section{Algorithms for PCA}
@@ -524,113 +532,176 @@ purpose~\cite{Chen2003,Patterson2006,Price2006,Zhu2002,Zhang2003}.
 Iterative eigenvalue (or singular value)
 methods~\cite{Bai2000} are therefore computationally efficient choices for
 determining these principal components, as only a handful of them are needed.
-
-The method implemented in FlashPCA~\cite{abraham2014fast} is randomized
-subspace iteration one of the randomized SVD algorithms described in
-\cite{halko2011finding}.
-
-To our surprise, it does not appear that Lanczos-based bidiagonalization
-methods have been used to compute principal components of genomics matrices.
+However, none of the classical methods known in numerical linear algebra
+(apart from subspace iteration) is implemented in commonly used software packages
+for PCAs in genomics, as shown in Table~\ref{tab:sw}.
+Notably absent is any Lanczos-based bidiagonalization method.
 We have therefore implemented Golub-Kahan-Lanczos bidiagonalization~\cite{Golub1965}
-method in pure Julia. To control the memory usage and accumulation of
+method in pure Julia\cite{Bezanson2012,Bezanson2015}.
+To control the memory usage and accumulation of
 roundoff error, we also include an implementation of the thick restart
 strategy~\cite{Stewart2001,Baglama2005} and offer the choice of full and
-partial reorthogonalization~\cite{Simon1984,Larsen1998}.
-Julia is a high level dynamic language for technical computing~\cite{Bezanson2012,Bezanson2015}
-that provides a convenient expressive syntax close to mathematical
-notation while facilitating compiler optimizations to generate fast machine
-code.
+partial reorthogonalization~\cite{Simon1984,Larsen1998}. The thick restart
+variant is becoming increasingly popular, being available not only in
+SLEPc~\cite{Hernandez2008}, but also in R and Python as the
+IRLANB package, and has also become the new algorithm for \verb|svds| in
+\textsc{MATLAB} R2016a (which also offers partial reorthogonalization).
 
-\begin{algorithm}
-\caption{Simple Golub-Kahan-Lanczos bidiagonalization in Julia}
+The implementation of Lanczos bidiagonalization in Julia allows us to introspect
+in great detail into the inner workings of the algorithm.
+Figures~\ref{fig:conv-lanczos-tsvd} and \ref{fig:lanczos-tr} show two different
+sets of running parameters for our code. The former is run with no restarting
+and partial reorthogonalization with threshold $\omega = 10^{-8}$, whereas the
+latter uses full reorthogonalization with thick restarting with a maximum
+subspace size of 40.
 
-\begin{lstlisting}
-function svd_gkl(A, q; maxiter=minimum(size(A)))
-    m, n = size(A)
-    T = eltype(A)
-    Tr = typeof(one(T)/norm([one(T)]))
+\begin{figure}
+\caption{Golub-Kahan-Lanczos bidiagonalization in Julia with no restarting and
+partial reorthogonalization at a threshold of $\omega = 10^{-8}$, requesting
+the top 20 singular values only. Orange vertical lines show when reorthogonalization
+was triggered in the computation.
+Left: Convergence behavior of the Ritz values.
+Right: Computed errors in Ritz values from the residual norm criterion.}
+\label{fig:conv-lanczos-tsvd}
+\includegraphics[width=0.45\textwidth]{fig/tsvdconv}
+\includegraphics[width=0.45\textwidth]{fig/tsvderror}
+\end{figure}
 
-    $α$s = Tr[]
-    $β$s = Tr[]
-    P = zeros(T, m, 0)
-    Q = [q]
+\begin{figure}
+\caption{Golub-Kahan-Lanczos bidiagonalization in Julia with thick restarting
+every 40 microiterations and full reorthogonalization,
+requesting the top 20 singular values only.
+Gray vertical lines show when restarting was triggered in the computation.
+\label{fig:lanczos-tr}
+}
 
-    $β$ = zero(Tr)
-    p = zeros(size(A, 1))
-    for iter in 1:maxiter
-        p = A*q - $β$*p
-	$α$ = norm(p)
-        p = p/$α$
-        push!($α$s, α)
-        P = [P p]
-
-        q = A'p - $α$*q
-        $β$ = norm(q)
-        q = q/$β$
-        push!($β$s, β)
-        Q = [Q q]
-    end
-
-    B = Bidiagonal($α$s, $β$s[1:maxiter-1], true)
-    F = svdfact(B)
-    LinAlg.SVD(P'F[:U], F[:S], F[:Vt]*Q[:,1:maxiter]')
-end
-\end{lstlisting}
-\end{algorithm}
+\includegraphics[width=0.45\textwidth]{fig/thickrestarted/fig-conv}
+\end{figure}
 
 
-\subsection{Convergence analysis of FlashPCA}
+\subsection{Convergence analysis of subspace iteration}
 
-Software like FlashPCA make use of randomized subspace interactions, which are
-essentially equivalent to subspace iteration with a randomized starting subspace.
+The software in Table~\ref{tab:sw} rely heavily on randomized block power
+interactions, which are essentially equivalent to subspace iteration with a
+randomized starting subspace.
 
-FlashPCA uses an unconventional convergence criterion, namely the matrix norm
-of the difference between successive subspace basis vectors,
-$\Vert Y_n - Y_{n-1} \Vert$.
+FlashPCA also uses an unconventional convergence criterion, namely the matrix
+norm of the difference between successive subspace basis vectors,
+\begin{equation}
+    \label{eq:flashpca-convergence}
+    \Delta Y_n = \Vert Y_n - Y_{n-1} \Vert.
+\end{equation}
+A simple check of the condition number of $Y_n$ with block iteration $n$ shows
+that the basis produced by the published version of FlashPCA (which does not
+reorthogonalize the basis vectors) rapidly leads to a linearly dependent set of
+vectors. As shown in Figure~\ref{fig:cond}, the loss of linear dependence occurs
+essentially exponentially, with the inverse condition number reaching machine
+epsilon after just five block iterations.
+Therefore, we do not recommend the published version of the FlashPCA algorithm
+for finding principal components, as it is practically guaranteed to not find
+all the principal components requested. We note that the current version of
+FlashPCA, which is newer than the published version, reorthogonalizes the
+basis vectors by default. In this paper, we refer to the older and newer
+versions as FlashPCA 1 and 2 respectively, to avoid ambiguity.
 
-By contrast, the standard measures of convergence using the residual norm yield
-a simple error estimate for the uncertainty in a computed eigenvalues.
+\begin{figure}
+    \centering
+    \begin{tikzpicture}
+        \begin{semilogyaxis}[width=\textwidth, height=0.5\textwidth,
+            xtick = {0,1,2,3,4,5}]
+            \addplot[very thick, mark=*] file {data/condNumberNorm.txt};
+        \end{semilogyaxis}
+    \end{tikzpicture}
+    \caption{Condition number of the matrix of subspace basis per iteration for
+    the published version of FlashPCA~\cite{abraham2014fast}, which normalizes
+    each vector but does not reorthogonalize them. Iteration zero is computed
+    for the normalized basis after the initial range computation.
+    \label{fig:cond}
+    }
+\end{figure}
 
-\cite[Theorem 4.5.1]{Parlett1998} states, in slightly altered notation, that for
-any scalar $\theta$ and vector $v$, there is an eigenvalue $\lambda$ of $Y$ satisfying
-\[
-\vert\lambda - \theta\vert \le \Vert Y v - v \theta \Vert
-\]
+%
+%
+% \cite[Theorem 4.5.1]{Parlett1998} states, in slightly altered notation, that for
+% any scalar $\theta$ and vector $v$, there is an eigenvalue $\lambda$ of $Y$ satisfying
+% \[
+% \vert\lambda - \theta\vert \le \Vert Y v - v \theta \Vert
+% \]
+%
+% Notably, this result does not require that $(\theta, v)$ be a Ritz pair or have
+% any variational structure whatsoever. Therefore, we can use
+%
+% \[
+% \Delta \sigma_i = \sqrt{\Vert X X^T v_i - v_i \theta_i \Vert}
+% \]
+%
+% as an error bar for using $\sqrt{\theta_i}$ as an estimate for a singular value,
+% where $(\theta_i, v_i)$ is some eigenpair of $Q^T X X^T Q$ computed at any
+% iteration of FlashPCA.
 
-Notably, this result does not require that $(\theta, v)$ be a Ritz pair or have
-any variational structure whatsoever. Therefore, we can use
 
-\[
-\Delta \sigma_i = \sqrt{\Vert X X^T v_i - v_i \theta_i \Vert}
-\]
+\section{Performance and accuracy of Lanczos vs. subspace iteration}
 
-as an error bar for using $\sqrt{\theta_i}$ as an estimate for a singular value,
-where $(\theta_i, v_i)$ is some eigenpair of $Q^T X X^T Q$ computed at any
-iteration of FlashPCA.
+We compared FlashPCA and our code on a machine with 230 GB of RAM and two
+Intel(R) Xeon(R) CPU E5-2697 v2 @ 2.70GHz processors, each with 12 cores.
+We used the FlashPCA v1.2 release binary for Linux.
+Our Julia code was run on a prerelease v0.5 version of Julia,
+built with Intel Composer XE 2016.0.109 Linux edition,
+and linked against Intel's Math Kernel Library v11.3.
 
-
-
-\section{Speed and accuracy results on synthetic genomics data}
-
-\subsection{Comparing TSVD and FlashPCA}
-For our synthetic dataset the time difference between the two methods is large. The initial preprocessing steps where the matrix is read and scaled contribute very little to any of the methods. For FlashPCA, the running time consists of two major components which is an initial matrix multiply, $XX^T$, and the subsequent subspace iterations. Forming the matrix $XX^T$ is the default option in FlashPCA and might be a relict from the time when the number of gene positions (columns) was much larger the number of sample (rows). For an aspect ratio of $\frac{1}{2}$ this computation is expensive. In addition to the pure flop expense in computing $XX^T$, on our system, there is a large penalty for using Eigen relative to MKL where the former executes in 926 and the latter in 306 seconds for the same number of threads. In contrast to the algorithmic differences, this difference might be very system dependent.
-
-The largest component of the running time for FlashPCA is the subspace iterations. By tracking the convergence criterion at each iteration it is clear that the convergence is very slow. Figure~\ref{fig:conv} shows the convergence of the FlashPCA with QR orthogonalization and our TSVD algorithm.
+Table~\ref{tab:runtime} shows a breakdown of the execution time in FlashPCA
+compared to our Lanczos implementation on our synthetic genomics matrix.
+We observe a large difference in the run time between our Lanczos implementation
+and subspace iteration.
+The bulk of the difference comes from Lanczos taking much fewer iterations
+(as measured by matrix-vector products) to converge. For FlashPCA, most of the
+run time is spent in an initial matrix multiply, $XX^T$, and the subsequent
+subspace iterations.
 
 \begin{table}
-    \caption{Running time in seconds for 41505x81700 SNP matrix}
+    \caption{Run time in seconds for a synthetic genomic matrix of
+    size $41505\times81700$ generated using Algorithm~\ref{code:model}.
+    FlashPCA 1: the published version of the FlashPCA program
+    algorithm~\cite{abraham2014fast}, which normalizes but does not reorthogonalizes
+    the vectors. FlashPCA 2: the current version of the FlashPCA program,
+    which now by default normalizes and reorthogonalizes the vectors using dense
+    QR factorization. This work: Golub-Kahan-Lanczos bidiagonalization without
+    restarting, employing partial reorthogonalization.
+    \label{tab:runtime}
+    }
     \centering
     \begin{tabular}{lrrr}
-                                   & FlashPCA 1 & FlashPCA 2   & Julia PRO     \\
+                                   & FlashPCA 1 & FlashPCA 2   & this work     \\ \hline
         Preprocessing              &   54        &   61        & 54            \\
-        Matrix multiplication      &  971        &  926        & .             \\
+        Forming $XX^T$             &  971        &  926        & N/A           \\
         Subspace/Lanczos iteration &   41        & 1935        & 37            \\
-        Postprocessing             &    7        &   11        & 0             \\
-        Total                      & 1073        & 2933        & 81
+        Postprocessing             &    7        &   11        & 0             \\ \hline
+        Total                      & 1073        & 2933        & 81  \\ \hline
     \end{tabular}
 \end{table}
 
-All timings were done on a machine with two Intel(R) Xeon(R) CPU E5-2697 v2 @ 2.70GHz processors which each have 12 cores and the machine has 230GB of memory.
+
+Forming the matrix $XX^T$ is the default option in FlashPCA; while advantageous
+for very wide matrices $\rho \approx 0$, it is an expensive step for our matrix,
+which has $\rho \approx 2$.
+Furthermore, we observe a performance penalty in using the Eigen linear algebra
+library (used by FlashPCA) relative to MKL.
+Whereas the former took 926 seconds to compute $XX^T$, the latter took only
+306 seconds on the same machine, using the same number of threads.
+This discrepancy may be system dependent.
+
+The subspace iterations form the bulk of the run time for FlashPCA 2. Even when
+doing explicit reorthogonalization of the basis vectors, FlashPCA still performs
+many more matrix-vector product-equivalents than our Lanczos implementation with
+no restarting and partial reorthogonalization. Figure~\ref{fig:conv} contrasts
+the convergence reported by FlashPCA 2 and our Lanczos implementation. Note that
+the convergence criteria used by the two programs are very different---the former
+uses the criterion \eqref{eq:flashpca-convergence}, which is very different from
+the classical residual norm criteria commonly used by Lanczos-based
+methods~\cite{Parlett1998}. Convergence of FlashPCA 2 is very slow,
+being nearly stagnant for many iterations before improving dramatically
+in the last iteration. In contrast, the Lanczos-based method shows essentially
+logarithmic convergence in the residual norm after the first few iterations.
 
 \begin{figure}
     \centering
@@ -640,7 +711,7 @@ All timings were done on a machine with two Intel(R) Xeon(R) CPU E5-2697 v2 @ 2.
                 \addplot[very thick] file {data/FlashPCAQRconv.txt};
             \end{semilogyaxis}
         \end{tikzpicture}
-        \caption{FlashPCA}
+        \caption{FlashPCA 2}
     \end{subfigure}
     \begin{subfigure}{0.23\textwidth}
         \begin{tikzpicture}
@@ -648,14 +719,19 @@ All timings were done on a machine with two Intel(R) Xeon(R) CPU E5-2697 v2 @ 2.
                 \addplot[very thick] file {data/JuliaPCAconv.txt};
             \end{semilogyaxis}
         \end{tikzpicture}
-        \caption{Julia-Lanczos}
+        \caption{this work}
     \end{subfigure}
-    \caption{Convergence}
+    \caption{Convergence of the FlashPCA 2 and Lanczos-based algorithms. The
+    convergence criterion used in FlashPCA 2 is \eqref{eq:flashpca-convergence},
+    which in principle can be very different from the residual norm criterion used
+    in our Lanczos-based implementation. Convergence of FlashPCA 2 is very slow,
+    being nearly stagnant for many iterations before improving dramatically
+    in the last iteration. In contrast, the Lanczos-based method shows essentially
+    logarithmic convergence in the residual norm after the first few iterations.
     \label{fig:conv}
+    }
 \end{figure}
 
-
-\subsection{Accuracy and speed results}
 
 \begin{table}
 \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
@@ -694,35 +770,6 @@ and relative error in the singular values of $10^{-8}$ for the Lanczos methods.
 }
 \end{table}
 
-\begin{figure}
-\caption{Convergence behavior of Lanczos with partial reorthogonalization. Top 20 singular values requested.}
-\label{fig:conv-lanczos-tsvd}
-\includegraphics[width=\textwidth]{fig/tsvdconv}
-\end{figure}
-
-\begin{figure}
-\caption{Errors of Ritz values for Lanczos with partial reorthogonalization. Top 20 singular values requested.}
-\label{fig:error-lanczos-tsvd}
-\includegraphics[width=\textwidth]{fig/tsvderror}
-\end{figure}
-
-\begin{figure}
-\caption{Convergence behavior of thick-restarted Lanczos with full reorthogonalization, with top 20 singular values requested. Restarts were triggered every 40 microiterations (grey vertical lines).
-\label{fig:lanczos-tr}
-}
-
-\includegraphics[width=\textwidth]{fig/thickrestarted/fig-conv}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \begin{tikzpicture}
-        \begin{semilogyaxis}[width=10cm, height=5cm]
-            \addplot[very thick, mark=*] file {data/condNumberNorm.txt};
-        \end{semilogyaxis}
-    \end{tikzpicture}
-    \caption{Condition number of the matrix of subspace basis per iteration for FlashPCA without QR. The condition number at iteration zero is the condition number of the normalized basis after the initial range computation.}
-\end{figure}
 
 \section{Conclusions}
 
