@@ -318,17 +318,16 @@ not part of the curriculum in statistical genomics.
 \begin{table}
     \centering
     \caption{List of software used for principal components analysis by genomics
-    scientists and numerical linear algebraists. $^*$: available in EIGENSOFT~\cite{Patterson2006}.
+    scientists and numerical linear algebraists. $^*$: available in EIGENSOFT~\cite{Patterson2006}. $^\dagger$: uses dense LAPACK routines.
     \label{tab:sw}}
-    \begin{tabular}{|c|c|c|c|}
+    \begin{tabular}{cccc}
        \hline
         Software         & Reference & Algorithm                              & Used in genomics \\ \hline
-        smartpca$^*$ & \cite{Patterson2006} & Householder bidiagonalization (LAPACK) & \cmark \\ \hline
-        FastPCA$^*$ & \cite{Galinsky2016} & Subspace iteration        & \cmark \\ \hline
+        smartpca$^{*\dagger}$ & \cite{Patterson2006} & Householder bidiagonalization & \cmark \\ FastPCA$^*$ & \cite{Galinsky2016} & Subspace iteration        & \cmark \\
         FlashPCA         & \cite{abraham2014fast} & Subspace iteration      & \cmark \\ \hline
-        ARPACK           & \cite{Lehoucq1996} & Lanczos tridiagonalization  & \xmark \\ \hline
-        PROPACK          & \cite{Larsen1998} & Lanczos bidiagonalization    & \xmark \\ \hline
-        SLEPc            & \cite{Hernandez2008} & Lanczos bidiagonalization & \xmark \\ \hline
+        ARPACK           & \cite{Lehoucq1996} & Lanczos tridiagonalization  & \xmark \\
+        PROPACK          & \cite{Larsen1998} & Lanczos bidiagonalization    & \xmark \\
+        SLEPc            & \cite{Hernandez2008} & Lanczos bidiagonalization & \xmark \\
         Anasazi          & \cite{Baker2009} & Lanczos bidiagonalization     & \xmark \\ \hline
     \end{tabular}
 \end{table}
