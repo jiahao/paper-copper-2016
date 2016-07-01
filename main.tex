@@ -734,38 +734,38 @@ logarithmic convergence in the residual norm after the first few iterations.
 
 
 \begin{table}
-\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+\begin{tabular}{|c|c|c|c|c|c|}
 \hline
- & Algorithm & mvps & Wall time & $\beta_{final}$ & $\left\Vert \Delta\theta\right\Vert _{1}$ & $\left\Vert \Delta\theta\right\Vert _{\infty}$\tabularnewline
+ & Algorithm & mvps & Wall time (sec) & $\left\Vert \Delta\theta\right\Vert _{1}$ & rel. err. \tabularnewline
 \hline
 \hline
-FlashPCA1 & Block power & 2280 & 2616.1 sec. & 6.4 & $4\times10^{+4}$ & $4\times10^{+4}$\tabularnewline
+FlashPCA1 & Block power & 800 & 1073 & $2.55$ & $0.067$ \tabularnewline
 \hline
-FlashPCA2 & Block power & 2933 &  &  &  & \tabularnewline
+FlashPCA2 & Block power & 33600 & 2933 & $0.0146$ & $1.88\dot10^{-5}$ \tabularnewline
 \hline
-PROPACK & GKL (PRO, NR) & 298 & 264.6 & - & $4\times10^{-8}$ & $4\times10^{-8}$\tabularnewline
+PROPACK & GKL (PRO, NR) & N/A & 120 & $5.2\dot10^{-5}$ & $1.75\dot10^{-11}$ \tabularnewline
 \hline
-ARPACK & GKL (FRO, IR) & 355 & 858.5 & 7.8 & $6\times10^{-3}$ & $1\times10^{-3}$\tabularnewline
+ARPACK & GKL (FRO, IR) & 338 & 378 & $9.2\dot10^{-6}$ & $8.34\dot10^{-15}$ \tabularnewline
 \hline
-this work & GKL (FRO, TR) & 280 & 397.8 & 6.4 & $2\times10^{-3}$ & $2\times10^{-3}$\tabularnewline
+this work & GKL (FRO, TR) & 360 & 132 & $0.0037$ & $5.03\dot10^{-8}$ \tabularnewline
 \hline
-this work & GKL (PRO, NR) & 321 & 302.4 & 15072 & $6\times10^{-4}$ & $6\times10^{-4}$\tabularnewline
+this work & GKL (PRO, NR) & 190 & 81 & $2.5\dot10^{-6}$ & $1.16\dot10^{-14}$ \tabularnewline
 \hline
 \end{tabular}
 
-\caption{Comparing various methods for computing the top 20 principal
+\caption{Comparing various methods for computing the top 10 principal
 components on a simulated genotype matrix of size $41505\times81700$.
-Linear algebra kernels were run on OpenBLAS v0.2.18 with 16 software threads.
-FlashPCA1 - Reimplementation in pure Julia of the published version of FlashPCA,
-FlashPCA2 - Reimplementation in pure Julia of the master version of FlashPCA available on GitHub,
+Linear algebra kernels were run on MKL with 24 software threads except for FlashPCA which ran on Eigen kernel.
+FlashPCA1 - FlashPCA with columnwise rescaling,
+FlashPCA2 - FlashPCA with QR orthogonalization,
 GKL - Golub--Kahan--Lanczos bidiagonalization,
 PRO - partial reorthogonalization,
 FRO - full reorthogonalization,
 NR - no restart,
-IR - implicit restart after 40 Lanczos vectors,
-TR - thick restart after 40 Lanczos vectors,
+IR - implicit restart after 20 Lanczos vectors,
+TR - thick restart after 20 Lanczos vectors,
 mvps - number of matrix--vector products.
-Termination criterion set to $\Vert Y\Vert = 10^{-8}$ for FlashPCA$n$,
+Termination criterion set to $\Vert \Delta Y\Vert = 10^{-8}$ for FlashPCA$n$,
 and relative error in the singular values of $10^{-8}$ for the Lanczos methods.
 }
 \end{table}
