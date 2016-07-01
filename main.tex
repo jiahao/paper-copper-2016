@@ -35,7 +35,7 @@
 \newcommand{\cmark}{\ding{51}}%
 \newcommand{\xmark}{\ding{55}}%
 
-\title{Fast computation of the principal components of genomics data in Julia
+\title{Fast computation of the principal components of genotype matrices in Julia
     \thanks{This
         work was supported by the Intel Science and Technology Center for Big Data.
 	}}
@@ -66,12 +66,12 @@
 \tableofcontents
 
 \begin{abstract}
-Finding the largest few principal components of a matrix of genetic data is a
-common task in genome-wide association studies (GWASs), both for dimensionality
-reduction and for identifying unwanted factors of variation.
-We describe a simple random matrix model for matrices that arise in GWASs,
-showing that the singular values have a bulk behavior that obeys a
-Marchenko-Pastur distributed with a handful of large outliers.
+Finding the largest few principal components of a matrix of genetic data
+is a common task in genome-wide association studies (GWASs), both for
+dimensionality reduction and for identifying unwanted factors of
+variation.  We describe a simple random matrix model for matrices that
+arise in GWASs, showing that the singular values have a bulk behavior that
+obeys a Marchenko-Pastur distributed with a handful of large outliers.
 We also implement Golub-Kahan-Lanczos (GKL) bidiagonalization in the Julia
 programming language, providing thick restarting and a choice between full
 and partial reorthogonalization strategies to control numerical roundoff.
@@ -97,7 +97,7 @@ and randomized subspace iteration respectively.
 
 \pagestyle{myheadings}
 \thispagestyle{plain}
-\markboth{J. CHEN, A. NOACK AND A. EDELMAN}{Principal components of genomics data in Julia}
+\markboth{J. CHEN, A. NOACK AND A. EDELMAN}{Principal components of genotype matrices in Julia}
 
 \section{Principal components of genomics data}
 
@@ -772,11 +772,29 @@ logarithmic convergence in the residual norm after the first few iterations.
     }
 \end{figure}
 
+Finally, we compare in Table~\ref{tab:shootout} the relative performance
+and accuracy of the subspace iteration methods against our Lanczos
+implementations as well as two other established libraries,
+ARPACK~\cite{Lehoucq1996} and PROPACK~\cite{Larsen1998}. ARPACK, while not
+originally designed for singular value computations, can be used to
+compute eigenvalues of the augmented matrix $\begin{pmatrix}0 & X\\X^T &
+0\end{pmatrix}$, whose eigenvalues are the same as the singular values of
+$X$. To measure performance, we count the number of matrix-vector product
+(mvps) as well as the wall time using the threaded BLAS implementation of
+MKL on 24 threads. To measure accuracy, we provide both
+$\Vert\Delta\theta\Vert_1 = \sum_{j=1}^k \beta_n \vert U^{(n)}_{mj}
+\vert$, the sum of all estimated errors for the singular values, as well
+as the relative error of the 10th singular value
+as computed by LAPACK. Our results show that our implementation of Lanczos
+bidiagonalization provides qualitatively better singular values that the
+subspace iteration methods provided by FlashPCA, even with QR
+reorthogonalization. Furthermore, our performance is significantly better
+than the standard tools, ARPACK and PROPACK.
 
 \begin{table}
 \begin{tabular}{|c|c|c|c|c|c|}
 \hline
- & Algorithm & mvps & Wall time (sec) & $\left\Vert \Delta\theta\right\Vert _{1}$ & rel. err. \tabularnewline
+ & Algorithm & mvps & time (sec) & $\left\Vert \Delta\theta\right\Vert _{1}$ & rel. err. \tabularnewline
 \hline
 \hline
 FlashPCA1 & Block power & 800 & 1073 & $2.55$ & $0.067$ \tabularnewline
@@ -795,7 +813,9 @@ this work & GKL (PRO, NR) & 190 & 81 & $2.5\cdot10^{-6}$ & $1.16\cdot10^{-14}$ \
 
 \caption{Comparing various methods for computing the top 10 principal
 components on a simulated genotype matrix of size $41505\times81700$.
-Linear algebra kernels were run on MKL with 24 software threads except for FlashPCA which ran on Eigen kernel.
+Linear algebra kernels were run on MKL with 24 software threads except for
+FlashPCA which ran on Eigen kernel.
+Timings reported are wall times in seconds.
 FlashPCA1 - FlashPCA with columnwise rescaling,
 FlashPCA2 - FlashPCA with QR orthogonalization,
 GKL - Golub--Kahan--Lanczos bidiagonalization,
@@ -806,31 +826,47 @@ IR - implicit restart after 20 Lanczos vectors,
 TR - thick restart after 20 Lanczos vectors,
 mvps - number of matrix--vector products.
 Termination criterion set to $\Vert \Delta Y\Vert = 10^{-8}$ for FlashPCA$n$,
-and relative error in the singular values of $10^{-8}$ for the Lanczos methods.
+and relative error in the 10th singular value compared with the value obtained from LAPACK.
+\label{tab:shootout}
 }
 \end{table}
 
 
 \section{Conclusions}
 
-The classic Lanczos bidiagonalization methods provide a numerically efficient
-method for quickly computing the largest few principal components of genomics
-data matrices. The implementation of these methods in the Julia programming
-language provides a fast, practical software tool that allows for easy
-introspection into the inner workings of the Lanczos algorithms.
+GWASs provide an exciting new data source for large scale matrix
+computations, whose nominal dimensions are already on the order of $10^5
+\times 10^5$ and will continue to grow rapidly in the near future.  The
+statistical and computational demands of GWAS on genotype matrices
+necessitate the best numerical algorithms and software.
 
-Further work remains to be done to provide the ability to do both partial
-reorthogonalization and thick restart in Julia, as well well as providing
-block Lanczos.
+We have implemented state of the art Lanczos bidiagonalization methods in
+pure Julia, allowing us to compute the largest principal components of
+genotype matrices more efficiently than any other tool currently being
+used for genomics data analysis, and even outperforming some standard
+packages for iterative eigenvalue and singular value computation such as
+ARPACK and PROPACK. The implementation of these methods in the Julia
+programming language provides a fast, practical software tool that permits
+easy introspection into the inner workings of the Lanczos algorithms, as
+well as experimentation into new methods with minimal fuss.
+
+Further work may include generalizing the code to also handle block
+Lanczos computations, which may further improve the performance of the
+computation by making use of BLAS3 function calls. Imputation of missing
+data will also become important in future data analysis, as nominal matrix
+sizes grow and the number of incorrectly sequenced sites grows. We are
+also implementing and studying into iterative methods for evaluating the
+regression models used in GWASs.
 
 \section*{Acknowledgments}
 
-We thank the Julia development community for their contributions to free and
-open source software. Julia is free software that can be downloaded from
-\url{julialang.org/downloads}. The implementation of iterative SVD described in
-this paper is available as the \verb|svdl| function in the
+We thank the Julia development community for their contributions to free
+and open source software. Julia is free software that can be downloaded
+from \url{julialang.org/downloads}. The implementation of iterative SVD
+described in this paper is available as the \verb|svdl| function in the
 \href{https://github.com/JuliaLang/IterativeSolvers.jl}{IterativeSolvers.jl}
-package. J.C. would also like to thank Jack Poulson (Stanford) and David Silvester
+package. J.C. would also like to thank Jack Poulson (Stanford) and David
+Silvester
 (Manchester) for many insightful discussions.
 
 \bibliography{bio,svd}
