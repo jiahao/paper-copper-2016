@@ -1,0 +1,141 @@
+\documentclass{letter}
+
+\date{June 30, 2016}
+
+\usepackage{color}
+\usepackage{fancyhdr}
+\usepackage{graphics}
+\usepackage{hyperref}
+\usepackage{times}
+\usepackage[normalem]{ulem}
+
+\usepackage{geometry}
+\geometry{tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+
+\newcommand{\affiliation}{Computer Science and Artificial Intelligence Laboratory}
+\newcommand{\room}{32-206}
+\author{Jiahao Chen}
+\newcommand{\email}{jiahao@mit.edu}
+\newcommand{\fax}{(617) 253-7030}
+\renewcommand{\telephone}{(617) 953-8640}
+
+%These are the standard color palette defined by MIT
+\definecolor{MITGrey}{cmyk}{0,0,0,0.5}
+\definecolor{MITRed}{cmyk}{0,1,0.65,0.34}
+
+%These are the standard typefaces defined by MIT
+\DeclareFixedFont{\boldfont}{OT1}{cmss}{bx}{n}{8}
+\DeclareFixedFont{\regularfont}{OT1}{cmss}{m}{n}{8}
+\DeclareFixedFont{\italicfont}{OT1}{cmss}{m}{sl}{8}
+
+%The header is 4 lines long, so adjust header spacing accordingly
+\addtolength{\headheight}{28pt}
+\addtolength{\textheight}{-28pt}
+
+%Color the dividing lines
+\renewcommand{\headrule}{\color{MITRed}{\hrule}}
+\renewcommand{\footrule}{\color{MITGrey}{\hrule}}
+\renewcommand{\headrulewidth}{0.3mm}
+\renewcommand{\footrulewidth}{0.3mm}
+
+%make sure the header goes on the first page
+
+\makeatletter
+
+%Left side of header: Name, affiliation, date, title and pages
+\lhead{\textcolor{MITGrey}{
+    \textcolor{black}{\boldfont \@author} \\\vspace{-3pt}
+    {\regularfont
+    Email\hspace{9mm}\email \\\vspace{-3pt}
+    Telephone \hspace{2mm}\telephone \\\vspace{-3pt}
+    Fax\hspace{11mm}\fax \vspace{-3pt}}
+}}
+
+%Center of header - MIT logo
+%the bounding box argument is for some latexes that don't know what size it is
+\chead{\scalebox{.5}{\includegraphics{mitlogo.pdf}}\vspace{-4pt}\hspace{32pt}}
+
+%Right side of header - physical and email addresses
+\rhead{\textcolor{MITGrey}{
+    \textcolor{black}{\boldfont \affiliation\\\vspace{-3pt}
+    Massachusetts Institute of Technology}\\\vspace{-3pt}
+    \regularfont{
+      32 Vassar Street, Room \room\\\vspace{-3pt}
+      Cambridge, Massachusetts 02139-4309}}}
+
+ \cfoot{}
+
+\renewcommand{\opening}[1]
+  {\ifx\@empty\fromaddress
+    {\raggedleft\@date\par}%
+  \else  % home address
+    {\raggedleft\begin{tabular}{l@{}}\ignorespaces
+      \fromaddress \\*[2\parskip]%
+      \@date \end{tabular}\par}%
+  \fi
+  \pagestyle{fancy}%
+  \vspace{2\parskip}%
+  {\raggedright \toname \\ \toaddress \par}%
+  \vspace{2\parskip}%
+  #1\par\nobreak}
+
+%%% End of fancy MIT header
+
+\makeatother
+
+\begin{document}
+
+\letter{Professor Michele Benzi\\
+Guest Editor-in-Charge of the Special Section\\
+SIAM Journal on Scientific Computing\\
+Society for Industrial and Applied Mathematics\\
+3600 Market Street, 6th Floor\\
+Philadelphia, Pennsylvania 19104-2688\\
+USA}
+
+\opening{Dear Prof. Benzi:}
+
+\signature{%
+\vspace{-1cm}\includegraphics{signature.pdf}\\
+Jiahao Chen, Ph.D.\\
+Research Scientist\\
+Massachusetts Institute of Technology\\
+Computer Science and Artificial Intelligence Laboratory\\
+}
+\begin{center}
+\textbf{\uline{Article submission for SISC Copper Mountain Special Section}}
+\par\end{center}
+
+Please find enclosed our manuscript entitled ``Fast computation of the
+principal components of genomics data in Julia''. The manuscript
+describes our investigation into the software used in the field of
+statistical genetics to compute principal component analyses, and
+places the applications of PCA to precision medicine on a firm
+statistical and linear algebraic foundation. We also show that
+superior performance and accuracy is attained by our own
+implementation in the Julia programming language of Lanczos
+bidiagonalization.
+
+We believe that this manuscript, which attempts to bridge the
+disciplinary gap between applied mathematics and the exciting and
+upcoming field of statistical genetics and precision medicine, will be
+of general interest to the readership of the \textit{SIAM Journal of
+Scientific Computing}.
+
+If permissible, we would like to suggest as potential reviewers Dr.\
+Richard Lehoucq at Sandia National Laboratories, Dr.\ Jack Poulson at
+Google Research, and Prof.\ Andreas Stathopoulos at the College of
+William and Mary, all of whom are experts in iterative methods in
+computational linear algebra and would be very familiar with their
+applications to principal components analysis.
+
+Once again, we thank you and the organizers of the 14th Copper
+Mountain Conference on Iterative Methods for allowing us to
+participate as speakers. We hope that you will agree with us that this
+manuscript will be deserving of publication in the \textit{SIAM
+Journal of Scientific Computing}, and look forward to your favourable
+reply.
+
+\closing{Yours faithfully,}
+
+\end{document}

@@ -1,7 +1,10 @@
 MAIN=main
 
-pdf:
+pdf: output/cover-letter.pdf
 	latexmk -pdf $(MAIN) -auxdir=output -outdir=output
+
+output/cover-letter.pdf:
+	make -C cover-letter
 
 travis:
 	#Create newunicodechar.sty
