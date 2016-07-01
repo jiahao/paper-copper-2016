@@ -175,7 +175,7 @@ The \emph{linear} regression model is one the simplest useful models, and can be
 motivated in several different ways. One way is in terms of least squares
 minimization to find the coefficients that minimize the sum of squared distances
 between a hyperplane and the observations. Another way to formulate the problem
-as finding a projection of the a vector of observations down onto the space
+as finding a projection of the vector of observations down onto the space
 spanned by the vectors of explanatory variables.
 One caveat in statistical studies is the assumption that the observations are
 randomly sampled with replacement, and hence that the observations can be
@@ -310,8 +310,8 @@ Table~\ref{tab:sw} lists some software packages providing eigenvalue or singular
 value computations useful for PCA. It may surprise readers that well-established
 packages in numerical linear algebra are rarely used in genomics, considering
 that libraries like ARPACK and PROPACK have convenient wrapper libraries in both
-R, Python, and MATLAB. This phenomenon might be explained by the pronounced use
-of C/C++ in statistical genetic, where calling ARPACK and PROPACK are relatively
+R, Python, and \textsc{MATLAB}. This phenomenon might be explained by the pronounced use
+of C/C++ in statistical genetics, where calling ARPACK and PROPACK are relatively
 more demanding, combined with the fact that iterative methods are traditionally
 not part of the curriculum in statistical genomics.
 
@@ -412,7 +412,7 @@ possibility of overlap resembles the effect of mixing different subpopulations
 together. (This step uses the auxiliary \verb|randrange| function, which returns
 a valid Julia range that is a subinterval of the range \verb|1:n|.)
 Second, model the genotype of interest by randomly setting $nsignal$ matrix
-element randomly to 0, 1 or 2.
+elements randomly to 0, 1 or 2.
 Third, simulate the effects of kinship by choosing a fraction $rkins$ of the
 rows to duplicate.
 
@@ -438,9 +438,9 @@ Marchenko-Pastur law~\cite{Marchenko1967} with parameter $\rho = 1.86$.
 
 \caption{Left: Histogram of the singular values of a synthetic genomics data
 matrix of size $41505\times81700$ (grey bars) generated with the code in
-Algorithm~\ref{code:model}, overlaid with the Marchenko-
-Pastur law \eqref{eq:mplaw-sv} for $\rho = 1.86$ (black line).
-Light grey vertical lines show the
+Algorithm~\ref{code:model}, overlaid with the
+Marchenko-Pastur law \eqref{eq:mplaw-sv} for $\rho = 1.86$ (black line).
+Light gray vertical lines show the
 presence of 18 outlying singular values whose magnitudes exceed
 $1.1\sigma_+ \approx 529.7$.
 Right: Scree plot of the singular values of the same matrix
@@ -536,16 +536,16 @@ However, none of the classical methods known in numerical linear algebra
 (apart from subspace iteration) is implemented in commonly used software packages
 for PCAs in genomics, as shown in Table~\ref{tab:sw}.
 Notably absent is any Lanczos-based bidiagonalization method.
-We have therefore implemented Golub-Kahan-Lanczos bidiagonalization~\cite{Golub1965}
+We have therefore implemented the Golub-Kahan-Lanczos bidiagonalization~\cite{Golub1965}
 method in pure Julia\cite{Bezanson2012,Bezanson2015}.
 To control the memory usage and accumulation of
 roundoff error, we also include an implementation of the thick restart
 strategy~\cite{Stewart2001,Baglama2005} and offer the choice of full and
 partial reorthogonalization~\cite{Simon1984,Larsen1998}. The thick restart
 variant is becoming increasingly popular, being available not only in
-SLEPc~\cite{Hernandez2008}, but also in R and Python as the
-IRLANB package, and has also become the new algorithm for \verb|svds| in
-\textsc{MATLAB} R2016a (which also offers partial reorthogonalization).
+SLEPc~\cite{Hernandez2008}, but also in R as the
+IRLBA package~\cite{cran-irlba}, and has also become the new algorithm for \verb|svds| in
+\textsc{MATLAB} R2016a (which also offers partial reorthogonalization)~\cite{matlab-r2016a}.
 
 The implementation of Lanczos bidiagonalization in Julia allows us to introspect
 in great detail into the inner workings of the algorithm.
