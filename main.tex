@@ -74,7 +74,7 @@ showing that the singular values have a bulk behavior that obeys a
 Marchenko-Pastur distributed with a handful of large outliers.
 We also implement Golub-Kahan-Lanczos (GKL) bidiagonalization in the Julia
 programming language, providing thick restarting and a choice between full
-and partial reorthongalization strategies to control numerical roundoff.
+and partial reorthogonalization strategies to control numerical roundoff.
 Our implementation of GKL bidiagonalization is up to 36 times faster than
 software tools used commonly in genomics data analysis for computing principal
 components, such as EIGENSOFT and FlashPCA, which use dense LAPACK routines
@@ -144,7 +144,7 @@ thus increasing the nominally observed frequency of certain
 mutations~\cite{Voight2005,Astle2009}. Relatedness is usually detected and removed in
 a separate preprocessing step, but it is not always possible to remove
 fully~\cite{PLINK}. Any remaining related samples will
-result in (near) linear dependencies in the rows of the genomic matrix,
+result in (near) linear dependencies in the rows of the genomics matrix,
 leading to the presence of several singular values that are very small or zero.
 
 Principal component analysis (PCA) was historically first used as a dimensionality
@@ -295,16 +295,16 @@ which has variance
         \begin{pmatrix} X^TX & X^TZ \\ Z^TX & Z^TZ \end{pmatrix}^{-1}.
 \end{equation*}
 
-In many applications, a few pricipal components of the covariance matrix of the complete SNP dataset is used as a proxy for the correlation between individuals. Computing principal components is therefore often a first step in analyzing GWASs.
+In many applications, a few principal components of the covariance matrix of the complete SNP data set is used as a proxy for the correlation between individuals. Computing principal components is therefore often a first step in analyzing GWASs.
 
 
 \subsection{Software for computing the principal components of genomics data}
 
-The software stack for GWAS is generally based on command line tools written completely in C/C++. Not only is the core computational algorithm written in C/C++ but also much of the pre- and postprocessing of the data. The datasets can be large but and the computations at times heavy but it has been a surprise to learn the extend to which analyses are carried out directly from the command line instead of using higher level languages like Matlab, R, or Python. This choice seems to limit the tools available to the analysts because, unless he is a C/C++ programmer, the programmer is restricted to the set of options included in the command line tool.
+The software stack for GWAS is generally based on command line tools written completely in C/C++. Not only is the core computational algorithm written in C/C++ but also much of the pre- and postprocessing of the data. The data sets can be large but and the computations at times heavy but it has been a surprise to learn the extend to which analyses are carried out directly from the command line instead of using higher level languages like MATLAB, R, or Python. This choice seems to limit the tools available to the analysts because, unless he is a C/C++ programmer, the programmer is restricted to the set of options included in the command line tool.
 
 Two major packages exist for computing the PCA in the GWAS software stack. The package \emph{EIGENSOFT} accompanied~\cite{Patterson2006} which popularized the use of PCA in GWAS. In the original version of the package, the routine \texttt{smartpca} for computing the PCA of a SNP matrix was based on an eigenvalue solver from LAPACK. In consequence, all the eigenvalues and vectors of the SNP matrix were computed even though only a few of them were used as principal components. Computing the full decomposition is inefficient and as the number of available samples has grown over the year, this approach has become impractical.
 
-More recently, \emph{FlashPCA}~\cite{abraham2014fast} has emerged as a potentially faster alternative to EIGENSOFT's \texttt{smartpca}. The PCA routine is based on a truncated SVD algorithm described in~\cite{halko2011finding}. More specifically, FlashPCA uses a subspace iteration scheme with either columnwise scaling (FlashPCA 1) or orthogonalization by QR (FlashPCA 2) in each iteration. The convergence criterion is based on the average of squared elementwise distance between the the bases for iteration $i-1$ and $i$. The QR orthogonalization step in the implementation of FlashPCA routine deviates from the algorithm in described~\cite{abraham2014fast} which only normalizes columnwise. Our conjecture was that this change was made to avoid loss of orthogonality in the subspace basis and the author of the package has confirmed this. In consequence, the timings in~\cite{abraham2014fast} do not correspond to the performance of the software run with default settings since the QR orthogonalization is much slower than the columnwise normalization. Furthermore, a degenerate basis might also converge much faster because it eventually converges to the single largest eigenvalue.
+More recently, \emph{FlashPCA}~\cite{abraham2014fast} has emerged as a potentially faster alternative to EIGENSOFT's \texttt{smartpca}. The PCA routine is based on a truncated SVD algorithm described in~\cite{halko2011finding}. More specifically, FlashPCA uses a subspace iteration scheme with either column-wise scaling (FlashPCA 1) or orthogonalization by QR (FlashPCA 2) in each iteration. The convergence criterion is based on the average of squared element-wise distance between the the bases for iteration $i-1$ and $i$. The QR orthogonalization step in the implementation of FlashPCA routine deviates from the algorithm in described~\cite{abraham2014fast} which only normalizes column-wise. Our conjecture was that this change was made to avoid loss of orthogonality in the subspace basis and the author of the package has confirmed this. In consequence, the timings in~\cite{abraham2014fast} do not correspond to the performance of the software run with default settings since the QR orthogonalization is much slower than the column-wise normalization. Furthermore, a degenerate basis might also converge much faster because it eventually converges to the single largest eigenvalue.
 
 Table~\ref{tab:sw} lists some software packages providing eigenvalue or singular
 value computations useful for PCA. It may surprise readers that well-established
@@ -486,7 +486,7 @@ and singular values for $\rho=1.5$.
 \caption{Marchenko-Pastur law for $\rho=1.5$ (black lines) for the densities of
 nonzero eigenvalues of a random covariance matrix ($XX^{T}$) and the singular
 values of $X$ for iid matrix elements with mean 0 and variance 1
-(black lines), corrsponding to \eqref{eq:mplaw-ev} and \eqref{eq:mplaw-sv}
+(black lines), corresponding to \eqref{eq:mplaw-ev} and \eqref{eq:mplaw-sv}
 respectively.
 Shown for comparison are corresponding histograms (grey
 bars) of numerically sampled eigenvalues and singular vectors from
@@ -645,7 +645,7 @@ versions as FlashPCA 1 and 2 respectively, to avoid ambiguity.
 We compared FlashPCA and our code on a machine with 230 GB of RAM and two
 Intel(R) Xeon(R) CPU E5-2697 v2 @ 2.70GHz processors, each with 12 cores.
 We used the FlashPCA v1.2 release binary for Linux.
-Our Julia code was run on a prerelease v0.5 version of Julia,
+Our Julia code was run on a pre-release v0.5 version of Julia,
 built with Intel Composer XE 2016.0.109 Linux edition,
 and linked against Intel's Math Kernel Library v11.3.
 
@@ -659,7 +659,7 @@ run time is spent in an initial matrix multiply, $XX^T$, and the subsequent
 subspace iterations.
 
 \begin{table}
-    \caption{Run time in seconds for a synthetic genomic matrix of
+    \caption{Run time in seconds for a synthetic genomics matrix of
     size $41505\times81700$ generated using Algorithm~\ref{code:model}.
     FlashPCA 1: the published version of the FlashPCA program
     algorithm~\cite{abraham2014fast}, which normalizes but does not reorthogonalizes
